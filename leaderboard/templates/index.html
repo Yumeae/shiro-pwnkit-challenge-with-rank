@@ -6,529 +6,435 @@
     <title>迷境探索 · MazeQuest — 全服排行榜</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
     <style>
-        /* ── Pixel vars ── */
         :root {
-            --bg:       #0a0a0f;
-            --card:     #12121c;
-            --card2:    #1a1a28;
-            --border:   #2a2a4a;
-            --px-cyan:  #00f5ff;
-            --px-pink:  #ff2d78;
-            --px-yellow:#ffe600;
-            --px-green: #39ff14;
-            --px-purple:#b44fff;
-            --text:     #d4d4e8;
-            --muted:    #555580;
-            --white:    #ffffff;
-            --px-font:  'Press Start 2P', 'Courier New', monospace;
-            --ui-font:  'Courier New', 'Noto Sans SC', monospace;
+            --bg:        #f0f2f5;
+            --card:      #ffffff;
+            --border:    #e8eaed;
+            --nav-bg:    #ffffff;
+            --nav-h:     52px;
+            --blue:      #4076ff;
+            --blue-l:    #e8effe;
+            --blue-t:    rgba(64,118,255,0.08);
+            --gold:      #f5a623;
+            --gold-l:    #fffbeb;
+            --silver:    #9b9b9b;
+            --bronze:    #b87333;
+            --text:      #1f2329;
+            --text-sec:  #646a73;
+            --text-mut:  #8f959e;
+            --green:     #00b42a;
+            --red:       #f53f3f;
+            --divider:   #f0f0f0;
         }
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background: var(--bg);
-            font-family: var(--ui-font);
+            font-family: Inter, 'Noto Sans SC', -apple-system, sans-serif;
             color: var(--text);
             min-height: 100vh;
-            image-rendering: pixelated;
         }
 
-        /* ── CRT scanline overlay ── */
-        body::after {
+        /* ── Dot-grid background ── */
+        body::before {
             content: '';
-            position: fixed; inset: 0; z-index: 9999;
-            pointer-events: none;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0,0,0,0.10) 2px,
-                rgba(0,0,0,0.10) 4px
-            );
-        }
-
-        /* ── Pixel border mixin (via box-shadow) ── */
-        .px-border {
-            border: 2px solid var(--border);
-            box-shadow:
-                inset -2px -2px 0 rgba(0,0,0,0.6),
-                inset 2px 2px 0 rgba(255,255,255,0.06);
-        }
-
-        /* ── Pixel grid background ── */
-        .pg-bg {
-            background-image:
-                linear-gradient(rgba(0,245,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,245,255,0.025) 1px, transparent 1px);
-            background-size: 32px 32px;
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: radial-gradient(circle, #c8cdd6 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.45;
         }
 
         /* ── Nav ── */
         nav {
             position: sticky; top: 0; z-index: 100;
-            background: rgba(10,10,15,0.96);
-            border-bottom: 2px solid var(--px-cyan);
-            box-shadow: 0 0 0 2px rgba(0,245,255,0.15), 0 4px 24px rgba(0,245,255,0.08);
-            height: 56px; padding: 0 28px;
-            display: flex; align-items: center; gap: 14px;
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--border);
+            height: var(--nav-h);
+            padding: 0 28px;
+            display: flex; align-items: center; gap: 0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
         }
 
-        .nav-logo {
-            display: flex; align-items: center; gap: 10px;
-            text-decoration: none; color: var(--px-cyan);
-            font-family: var(--px-font); font-size: 0.55rem;
-            text-shadow: 0 0 8px var(--px-cyan);
-            white-space: nowrap;
+        .nav-brand {
+            display: flex; align-items: center; gap: 8px;
+            text-decoration: none; color: var(--text);
+            font-weight: 700; font-size: 0.95rem;
+            margin-right: 20px; flex-shrink: 0;
         }
-        .nav-logo-icon {
-            width: 32px; height: 32px;
-            background: var(--card2);
-            border: 2px solid var(--px-cyan);
+        .nav-brand-icon {
+            width: 28px; height: 28px; border-radius: 6px;
+            background: var(--blue); color: #fff;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; flex-shrink: 0;
-            box-shadow: 0 0 6px var(--px-cyan);
+            font-size: 0.85rem;
         }
 
-        .px-tag {
-            font-family: var(--px-font); font-size: 0.45rem;
-            padding: 3px 8px; border: 2px solid;
-            text-transform: uppercase; letter-spacing: 0;
+        .nav-tabs { display: flex; align-items: center; height: 100%; gap: 2px; }
+        .nav-tab {
+            display: flex; align-items: center; gap: 6px;
+            height: 100%; padding: 0 16px;
+            font-size: 0.82rem; font-weight: 500;
+            color: var(--text-sec); text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+            white-space: nowrap; cursor: pointer;
         }
-        .px-tag.cyan   { border-color: var(--px-cyan);   color: var(--px-cyan);   background: rgba(0,245,255,0.08);  }
-        .px-tag.pink   { border-color: var(--px-pink);   color: var(--px-pink);   background: rgba(255,45,120,0.08); }
-        .px-tag.yellow { border-color: var(--px-yellow); color: var(--px-yellow); background: rgba(255,230,0,0.08);  }
-        .px-tag.green  { border-color: var(--px-green);  color: var(--px-green);  background: rgba(57,255,20,0.08);  }
+        .nav-tab:hover { color: var(--blue); }
+        .nav-tab.active {
+            color: var(--blue); border-bottom-color: var(--blue);
+            font-weight: 600;
+        }
+        .nav-tab-icon { font-size: 0.82rem; }
 
-        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
-
-        .px-btn {
-            font-family: var(--px-font); font-size: 0.45rem;
-            padding: 8px 14px; border: 2px solid var(--px-pink);
-            background: rgba(255,45,120,0.12); color: var(--px-pink);
-            text-decoration: none; cursor: pointer;
-            text-shadow: 0 0 6px var(--px-pink);
-            box-shadow: 0 0 10px rgba(255,45,120,0.2);
-            transition: background 0.15s, box-shadow 0.15s;
-            white-space: nowrap;
+        .nav-right {
+            margin-left: auto; display: flex; align-items: center; gap: 10px;
         }
-        .px-btn:hover {
-            background: rgba(255,45,120,0.25);
-            box-shadow: 0 0 18px rgba(255,45,120,0.45);
-        }
-        .px-btn::before { content: '▶ '; }
 
         .nav-live {
-            display: flex; align-items: center; gap: 6px;
-            font-family: var(--px-font); font-size: 0.4rem; color: var(--muted);
+            display: flex; align-items: center; gap: 5px;
+            font-size: 0.75rem; color: var(--text-mut);
         }
         .live-dot {
-            width: 8px; height: 8px;
-            background: var(--px-green);
-            box-shadow: 0 0 6px var(--px-green);
-            animation: blink 1.2s step-end infinite;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2.4s ease-in-out infinite;
         }
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-        #nav-time { color: var(--px-green); text-shadow: 0 0 6px var(--px-green); }
+        @keyframes pulse {
+            0%,100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.35; transform: scale(0.65); }
+        }
+        #nav-time { color: var(--text); font-weight: 600; }
 
-        /* ── Layout ── */
-        main { max-width: 1200px; margin: 0 auto; padding: 48px 24px 80px; }
+        .nav-btn {
+            padding: 6px 16px; border-radius: 6px;
+            background: var(--blue); color: #fff;
+            font-size: 0.78rem; font-weight: 600;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: opacity 0.15s;
+        }
+        .nav-btn:hover { opacity: 0.88; }
 
-        /* ── Hero ── */
-        .hero { margin-bottom: 44px; text-align: center; }
+        /* ── Page layout ── */
+        .page { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 28px 20px 64px; }
 
+        /* ── Section title ── */
+        .sec-title {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.9rem; font-weight: 700; color: var(--text);
+            margin-bottom: 16px;
+        }
+        .sec-title-icon {
+            width: 20px; height: 20px; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.72rem;
+        }
+        .sec-title-icon.blue { background: var(--blue); color: #fff; }
+        .sec-title-icon.gold { background: var(--gold); color: #fff; }
+
+        /* ── Hero banner ── */
+        .hero-banner {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 28px 32px;
+            margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: space-between; gap: 24px;
+            overflow: hidden; position: relative;
+        }
+        .hero-banner::after {
+            content: '';
+            position: absolute; right: -40px; top: -40px;
+            width: 200px; height: 200px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(64,118,255,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-left h1 {
+            font-size: 1.4rem; font-weight: 700; color: var(--text);
+            line-height: 1.4;
+        }
+        .hero-left h1 em { font-style: normal; color: var(--blue); }
+        .hero-left p {
+            margin-top: 6px; font-size: 0.82rem; color: var(--text-sec); line-height: 1.7;
+        }
         .hero-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            font-family: var(--px-font); font-size: 0.45rem;
-            padding: 6px 14px; margin-bottom: 22px;
-            border: 2px solid var(--px-yellow);
-            color: var(--px-yellow);
-            background: rgba(255,230,0,0.07);
-            text-shadow: 0 0 6px var(--px-yellow);
-            box-shadow: 0 0 10px rgba(255,230,0,0.12);
-            letter-spacing: 1px;
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 20px;
+            background: var(--blue-l); color: var(--blue);
+            font-size: 0.72rem; font-weight: 600; margin-bottom: 10px;
         }
+        .hero-right { display: flex; gap: 12px; flex-shrink: 0; }
 
-        .hero h1 {
-            font-family: var(--px-font);
-            font-size: clamp(0.85rem, 2.5vw, 1.4rem);
-            line-height: 1.8;
-            color: var(--white);
-            text-shadow: 0 0 16px var(--px-cyan), 0 0 32px rgba(0,245,255,0.3);
-            letter-spacing: 2px;
+        /* ── Stat cards ── */
+        .stat-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 18px 24px; text-align: center;
+            min-width: 120px;
         }
-        .hero h1 em {
-            font-style: normal; color: var(--px-cyan);
-            text-shadow: 0 0 10px var(--px-cyan);
-        }
+        .stat-card-label { font-size: 0.72rem; color: var(--text-sec); margin-bottom: 6px; }
+        .stat-card-val { font-size: 1.8rem; font-weight: 700; line-height: 1; }
+        .stat-card-val.blue   { color: var(--blue); }
+        .stat-card-val.gold   { color: var(--gold); }
+        .stat-card-val.green  { color: var(--green); }
 
-        .hero-desc {
-            margin: 16px auto 0; max-width: 560px;
-            font-size: 0.78rem; color: var(--muted);
-            line-height: 2; letter-spacing: 0.5px;
+        /* ── Stats row ── */
+        .stats-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .stat-item {
+            flex: 1; min-width: 140px;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 16px 20px;
+            display: flex; align-items: center; gap: 14px;
         }
+        .stat-item-icon {
+            width: 40px; height: 40px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .stat-item-icon.blue   { background: var(--blue-l); }
+        .stat-item-icon.gold   { background: #fff8e6; }
+        .stat-item-icon.green  { background: #e8f8ed; }
+        .stat-item-body .val { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+        .stat-item-body .val.blue  { color: var(--blue); }
+        .stat-item-body .val.gold  { color: var(--gold); }
+        .stat-item-body .val.green { color: var(--green); }
+        .stat-item-body .lbl { font-size: 0.72rem; color: var(--text-sec); margin-top: 4px; }
 
-        /* ── Pixel divider ── */
-        .px-divider {
-            border: none;
-            border-top: 2px dashed var(--border);
-            margin: 32px 0;
-            opacity: 0.5;
-        }
+        /* ── Boards grid ── */
+        .boards { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 16px; }
 
-        /* ── Intro cards ── */
-        .intro-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 14px; margin-bottom: 44px;
-        }
-        .intro-card {
-            background: var(--card); padding: 20px;
-            border: 2px solid var(--border);
-            box-shadow: inset -2px -2px 0 rgba(0,0,0,0.5), inset 2px 2px 0 rgba(255,255,255,0.04);
-            transition: border-color 0.15s, box-shadow 0.15s;
-            position: relative;
-        }
-        .intro-card::before {
-            content: '';
-            position: absolute; top: -2px; left: -2px; right: -2px;
-            height: 3px;
-        }
-        .intro-card.c1::before { background: var(--px-cyan); box-shadow: 0 0 8px var(--px-cyan); }
-        .intro-card.c2::before { background: var(--px-yellow); box-shadow: 0 0 8px var(--px-yellow); }
-        .intro-card.c3::before { background: var(--px-green); box-shadow: 0 0 8px var(--px-green); }
-        .intro-card:hover { border-color: var(--px-cyan); }
-        .intro-card:hover::before { opacity: 1; }
-
-        .intro-card-icon {
-            font-size: 1.5rem; margin-bottom: 12px;
-            display: block;
-            filter: drop-shadow(0 0 4px rgba(0,245,255,0.4));
-        }
-        .intro-card h3 {
-            font-family: var(--px-font); font-size: 0.5rem;
-            color: var(--white); margin-bottom: 10px; line-height: 1.8;
-        }
-        .intro-card p {
-            font-size: 0.75rem; color: var(--muted); line-height: 1.8;
-        }
-
-        /* ── Stats ── */
-        .stats { display: flex; gap: 12px; margin-bottom: 36px; flex-wrap: wrap; }
-        .stat {
-            flex: 1; min-width: 150px;
-            background: var(--card);
-            border: 2px solid var(--border);
-            padding: 16px 20px;
-            box-shadow: inset -2px -2px 0 rgba(0,0,0,0.5);
-            position: relative;
-        }
-        .stat::after {
-            content: '';
-            position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-        }
-        .stat:nth-child(1)::after { background: var(--px-cyan); box-shadow: 0 0 6px var(--px-cyan); }
-        .stat:nth-child(2)::after { background: var(--px-yellow); box-shadow: 0 0 6px var(--px-yellow); }
-        .stat:nth-child(3)::after { background: var(--px-green); box-shadow: 0 0 6px var(--px-green); }
-
-        .stat-label {
-            font-family: var(--px-font); font-size: 0.38rem;
-            color: var(--muted); margin-bottom: 10px;
-            letter-spacing: 0.5px; text-transform: uppercase;
-        }
-        .stat-value {
-            font-family: var(--px-font); font-size: 1.8rem;
-            line-height: 1; color: var(--white);
-        }
-        .stat-value.c-cyan   { color: var(--px-cyan);   text-shadow: 0 0 12px var(--px-cyan); }
-        .stat-value.c-yellow { color: var(--px-yellow); text-shadow: 0 0 12px var(--px-yellow); }
-        .stat-value.c-green  { color: var(--px-green);  text-shadow: 0 0 12px var(--px-green); }
-
-        /* ── Boards ── */
-        .boards { display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 20px; }
-
+        /* ── Board card ── */
         .board {
-            background: var(--card);
-            border: 2px solid var(--border);
-            display: flex; flex-direction: column;
-            box-shadow: inset -2px -2px 0 rgba(0,0,0,0.5);
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; display: flex; flex-direction: column;
+            overflow: hidden;
         }
-
-        /* Pixel corner marks */
-        .board::before, .board::after {
-            content: '';
-            position: absolute;
-        }
-
-        .board { position: relative; }
-
         .board-header {
-            padding: 14px 18px;
-            display: flex; align-items: center; justify-content: space-between; gap: 10px;
-            border-bottom: 2px solid var(--border);
+            padding: 14px 20px; border-bottom: 1px solid var(--divider);
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
         }
-        .board.lv1 .board-header {
-            background: rgba(0,245,255,0.06);
-            border-bottom-color: var(--px-cyan);
-            box-shadow: inset 0 0 20px rgba(0,245,255,0.05);
-        }
-        .board.lv2 .board-header {
-            background: rgba(255,230,0,0.06);
-            border-bottom-color: var(--px-yellow);
-            box-shadow: inset 0 0 20px rgba(255,230,0,0.05);
-        }
-
-        .board.lv1 { border-top: 3px solid var(--px-cyan); box-shadow: 0 0 14px rgba(0,245,255,0.1), inset -2px -2px 0 rgba(0,0,0,0.5); }
-        .board.lv2 { border-top: 3px solid var(--px-yellow); box-shadow: 0 0 14px rgba(255,230,0,0.1), inset -2px -2px 0 rgba(0,0,0,0.5); }
-
         .bh-left { display: flex; align-items: center; gap: 10px; }
         .bh-icon {
-            width: 36px; height: 36px;
-            border: 2px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.06);
+            width: 32px; height: 32px; border-radius: 6px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; flex-shrink: 0;
+            font-size: 0.95rem; flex-shrink: 0;
         }
-        .bh-title h2 {
-            font-family: var(--px-font); font-size: 0.5rem;
-            line-height: 1.8;
-        }
-        .board.lv1 .bh-title h2 { color: var(--px-cyan); text-shadow: 0 0 8px var(--px-cyan); }
-        .board.lv2 .bh-title h2 { color: var(--px-yellow); text-shadow: 0 0 8px var(--px-yellow); }
-        .bh-title sub { font-size: 0.65rem; color: var(--muted); display: block; margin-top: 2px; }
-
+        .board.lv1 .bh-icon { background: var(--blue-l); }
+        .board.lv2 .bh-icon { background: #fff8e6; }
+        .bh-title h2 { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+        .bh-title sub { font-size: 0.68rem; color: var(--text-mut); display: block; margin-top: 2px; }
         .bh-badge {
-            font-family: var(--px-font); font-size: 0.4rem;
-            padding: 4px 10px; border: 2px solid;
+            padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
             white-space: nowrap; flex-shrink: 0;
         }
-        .board.lv1 .bh-badge { border-color: var(--px-cyan); color: var(--px-cyan); background: rgba(0,245,255,0.08); }
-        .board.lv2 .bh-badge { border-color: var(--px-yellow); color: var(--px-yellow); background: rgba(255,230,0,0.08); }
+        .board.lv1 .bh-badge { background: var(--blue-l); color: var(--blue); }
+        .board.lv2 .bh-badge { background: #fff8e6; color: var(--gold); }
 
         .board-sub {
-            padding: 7px 18px;
-            background: rgba(255,255,255,0.02);
-            border-bottom: 1px dashed var(--border);
-            font-size: 0.68rem; color: var(--muted);
+            padding: 7px 20px; background: #fafbfc;
+            border-bottom: 1px solid var(--divider);
+            font-size: 0.72rem; color: var(--text-sec);
         }
 
         /* ── Table ── */
         table { width: 100%; border-collapse: collapse; }
         thead th {
-            padding: 9px 18px;
-            background: rgba(255,255,255,0.025);
-            border-bottom: 2px solid var(--border);
-            font-family: var(--px-font); font-size: 0.38rem;
-            text-transform: uppercase; letter-spacing: 1px;
-            color: var(--muted); text-align: left;
+            padding: 10px 20px;
+            background: #fafbfc; border-bottom: 1px solid var(--divider);
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.4px; color: var(--text-sec); text-align: left;
         }
         thead th:last-child { text-align: right; }
 
-        tbody tr {
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            transition: background 0.1s;
-        }
+        tbody tr { border-bottom: 1px solid var(--divider); transition: background 0.1s; }
         tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: rgba(255,255,255,0.03) !important; }
+        tbody tr:hover { background: #f5f7ff !important; }
 
-        tbody tr.r1 { background: rgba(0,245,255,0.06); }
-        tbody tr.r2 { background: rgba(0,245,255,0.03); }
-        tbody tr.r3 { background: rgba(255,230,0,0.03); }
+        /* Top-3 highlight rows */
+        tbody tr.r1 { background: #fffbeb; }
+        tbody tr.r2 { background: #fafbff; }
+        tbody tr.r3 { background: #fafbff; }
 
-        .board.lv2 tbody tr.r1 { background: rgba(255,230,0,0.08); }
-        .board.lv2 tbody tr.r2 { background: rgba(255,230,0,0.04); }
-        .board.lv2 tbody tr.r3 { background: rgba(255,230,0,0.02); }
-
-        td { padding: 12px 18px; font-size: 0.82rem; }
+        td { padding: 11px 20px; font-size: 0.84rem; }
         td:last-child { text-align: right; }
-        .td-rank { width: 52px; }
+        .td-rank { width: 56px; }
 
-        .medal { font-size: 1.1rem; filter: drop-shadow(0 0 4px rgba(255,215,0,0.6)); }
-        .rank-n {
-            font-family: var(--px-font); font-size: 0.5rem;
-            color: var(--muted);
-        }
+        .medal { font-size: 1rem; }
+        .rank-n { font-weight: 600; color: var(--text-sec); font-size: 0.82rem; }
 
         .td-user { display: flex; align-items: center; gap: 10px; }
         .avatar {
-            width: 28px; height: 28px;
-            border: 2px solid;
+            width: 26px; height: 26px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-family: var(--px-font); font-size: 0.38rem;
-            font-weight: 800; flex-shrink: 0;
+            font-size: 0.6rem; font-weight: 700; flex-shrink: 0; color: #fff;
         }
-        .board.lv1 .avatar { border-color: var(--px-cyan); color: var(--px-cyan); background: rgba(0,245,255,0.08); }
-        .board.lv2 .avatar { border-color: var(--px-yellow); color: var(--px-yellow); background: rgba(255,230,0,0.08); }
+        .board.lv1 .avatar { background: var(--blue); }
+        .board.lv2 .avatar { background: var(--gold); }
+        .uname { font-weight: 500; color: var(--text); font-size: 0.84rem; }
 
-        .uname { font-size: 0.82rem; color: var(--text); }
+        .td-time { font-size: 0.75rem; color: var(--text-sec); font-variant-numeric: tabular-nums; }
+        .td-count { font-weight: 600; color: var(--blue); }
 
-        .td-time {
-            font-family: var(--ui-font); font-size: 0.72rem;
-            color: var(--muted); letter-spacing: 0.5px;
-        }
-
-        /* ── Empty ── */
-        .empty { padding: 40px 20px; text-align: center; }
-        .empty-emoji { font-size: 2rem; margin-bottom: 12px; display: block; }
-        .empty h3 {
-            font-family: var(--px-font); font-size: 0.5rem;
-            color: var(--text); margin-bottom: 10px; line-height: 1.8;
-        }
-        .empty p { font-size: 0.72rem; color: var(--muted); line-height: 1.9; }
+        /* ── Empty state ── */
+        .empty { padding: 48px 20px; text-align: center; }
+        .empty-emoji { font-size: 2.2rem; margin-bottom: 10px; display: block; }
+        .empty h3 { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+        .empty p { font-size: 0.76rem; color: var(--text-sec); line-height: 1.8; }
 
         /* ── Board footer ── */
         .board-foot {
-            margin-top: auto; padding: 8px 18px;
-            border-top: 1px dashed var(--border);
+            margin-top: auto; padding: 9px 20px;
+            border-top: 1px solid var(--divider);
             display: flex; justify-content: space-between;
-            font-family: var(--px-font); font-size: 0.35rem;
-            color: var(--muted);
+            font-size: 0.7rem; color: var(--text-mut);
+            background: #fafbfc;
         }
 
-        /* ── Pixel marquee ticker ── */
-        .ticker-wrap {
-            overflow: hidden;
-            background: rgba(0,245,255,0.05);
-            border-top: 1px solid var(--px-cyan);
-            border-bottom: 1px solid var(--px-cyan);
-            padding: 6px 0;
-            margin-bottom: 36px;
+        /* ── Info sidebar cards (below boards) ── */
+        .info-row {
+            margin-top: 16px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
         }
-        .ticker {
-            display: flex; gap: 0;
-            animation: ticker-scroll 28s linear infinite;
-            white-space: nowrap;
+        .info-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 18px 20px;
         }
-        .ticker span {
-            font-family: var(--px-font); font-size: 0.42rem;
-            color: var(--px-cyan); padding: 0 32px;
-            text-shadow: 0 0 6px var(--px-cyan);
-        }
-        .ticker span.sep { color: var(--muted); }
-        @keyframes ticker-scroll {
-            from { transform: translateX(0); }
-            to   { transform: translateX(-50%); }
-        }
+        .info-card p { font-size: 0.78rem; color: var(--text-sec); line-height: 1.8; }
+        .info-card p strong { color: var(--text); }
 
         /* ── Site footer ── */
         footer {
-            text-align: center; padding: 36px 20px;
-            font-family: var(--px-font); font-size: 0.38rem;
-            color: var(--muted); line-height: 3;
-            border-top: 2px dashed var(--border);
+            position: relative; z-index: 1;
+            border-top: 1px solid var(--border); background: var(--card);
+            padding: 28px 20px; margin-top: 0;
+            text-align: center; font-size: 0.73rem; color: var(--text-sec); line-height: 2.2;
         }
-        footer a { color: var(--px-cyan); text-decoration: none; text-shadow: 0 0 6px var(--px-cyan); }
+        footer a { color: var(--blue); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
 
-        /* ── Pixel star field (JS rendered) ── */
-        #starfield {
-            position: fixed; inset: 0; z-index: 0;
-            pointer-events: none; overflow: hidden;
+        /* ── Top-3 podium strip (inside boards) ── */
+        .podium-strip {
+            display: flex; align-items: flex-end; gap: 8px;
+            padding: 16px 20px; border-bottom: 1px solid var(--divider);
+            background: linear-gradient(180deg, #f7f9ff 0%, var(--card) 100%);
         }
-        main, nav, footer { position: relative; z-index: 1; }
+        .podium-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+            text-align: center;
+        }
+        .podium-item.p1 { order: 2; }
+        .podium-item.p2 { order: 1; }
+        .podium-item.p3 { order: 3; }
+        .podium-avatar {
+            width: 42px; height: 42px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 800; color: #fff;
+            position: relative; flex-shrink: 0;
+        }
+        .podium-item.p1 .podium-avatar { width: 52px; height: 52px; background: var(--gold); }
+        .podium-item.p2 .podium-avatar { background: var(--silver); }
+        .podium-item.p3 .podium-avatar { background: var(--bronze); }
+        .podium-medal { font-size: 1.1rem; margin-bottom: 2px; }
+        .podium-name { font-size: 0.68rem; font-weight: 600; color: var(--text); max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .podium-time { font-size: 0.6rem; color: var(--text-sec); }
 
-        @media (max-width: 960px) {
+        /* ── Responsive ── */
+        @media (max-width: 980px) {
             .boards { grid-template-columns: 1fr; }
+            .hero-right { display: none; }
+        }
+        @media (max-width: 640px) {
             nav { padding: 0 14px; }
-            nav .nav-logo span { display: none; }
-            main { padding: 30px 14px 60px; }
-            .hero h1 { font-size: 0.8rem; }
+            .page { padding: 16px 12px 48px; }
+            .nav-tabs .nav-tab:not(.active):not(:nth-child(-n+2)) { display: none; }
         }
     </style>
 </head>
 <body>
 
-<!-- Pixel star field -->
-<canvas id="starfield"></canvas>
-
+<!-- Nav -->
 <nav>
-    <a class="nav-logo" href="#">
-        <div class="nav-logo-icon">🗺️</div>
+    <a class="nav-brand" href="#">
+        <div class="nav-brand-icon">🗺️</div>
         <span>MazeQuest</span>
     </a>
-    <div class="px-tag cyan">排行榜</div>
-    <div class="px-tag yellow">挑战中</div>
+    <div class="nav-tabs">
+        <a class="nav-tab" href="{{ challenge_url }}"><span class="nav-tab-icon">🏠</span>首页</a>
+        <a class="nav-tab" href="{{ challenge_url }}"><span class="nav-tab-icon">📋</span>题目</a>
+        <a class="nav-tab" href="{{ challenge_url }}"><span class="nav-tab-icon">🎯</span>活动</a>
+        <a class="nav-tab active" href="#"><span class="nav-tab-icon">🏆</span>排行榜</a>
+    </div>
     <div class="nav-right">
-        <a class="px-btn" href="{{ challenge_url }}">进入游戏</a>
         <div class="nav-live">
-            <div class="live-dot"></div>
-            <span>LIVE</span>
+            <span class="live-dot"></span>
+            <span>实时</span>
             <span id="nav-time"></span>
         </div>
+        <a class="nav-btn" href="{{ challenge_url }}">进入挑战</a>
     </div>
 </nav>
 
-<main>
-    <!-- Hero -->
-    <div class="hero">
-        <div class="hero-badge">★ HALL OF FAME · 全服英雄榜 ★</div>
-        <h1>迷境探索 <em>RANK</em></h1>
-        <p class="hero-desc">在 MazeQuest 的世界中，每一位勇者都在挑战未知的迷境。</p>
-        <p class="hero-desc">完成关卡后，你的名字将永远铭刻在英雄榜上。</p>
-        <p class="hero-desc">所有记录实时更新，快来挑战属于你的传奇！</p>
-    </div>
+<div class="page">
 
-    <!-- Ticker -->
-    <div class="ticker-wrap">
-        <div class="ticker" id="ticker">
-            <span>▶ MAZEQUEST 迷境探索</span>
-            <span class="sep">★</span>
-            <span>挑战赛进行中</span>
-            <span class="sep">★</span>
-            <span>REAL-TIME LEADERBOARD</span>
-            <span class="sep">★</span>
-            <span>每 30 秒自动刷新</span>
-            <span class="sep">★</span>
-            <span>▶ MAZEQUEST 迷境探索</span>
-            <span class="sep">★</span>
-            <span>挑战赛进行中</span>
-            <span class="sep">★</span>
-            <span>REAL-TIME LEADERBOARD</span>
-            <span class="sep">★</span>
-            <span>每 30 秒自动刷新</span>
-            <span class="sep">★</span>
+    <!-- Hero banner -->
+    <div class="hero-banner">
+        <div class="hero-left">
+            <div class="hero-badge">🏆 全服英雄榜</div>
+            <h1>迷境探索 <em>排行榜</em></h1>
+            <p>完成关卡后你的名字将铭刻于此，榜单每 30 秒自动刷新。</p>
+        </div>
+        <div class="hero-right">
+            <div class="stat-card">
+                <div class="stat-card-label">🗝️ 第一章通关</div>
+                <div class="stat-card-val blue" id="stat-user">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">👑 第二章通关</div>
+                <div class="stat-card-val gold" id="stat-root">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-label">🌟 全章节通关</div>
+                <div class="stat-card-val green" id="stat-both">—</div>
+            </div>
         </div>
     </div>
 
-    <!-- Intro cards -->
-    <div class="intro-grid">
-        <div class="intro-card c1">
-            <span class="intro-card-icon">🗝️</span>
-            <h3>CH.1 · MAZE EXPLORER</h3>
-            <p>探索神秘的地下迷宫，找到隐藏的钥匙，解锁通往下一层的大门，成为初级探险家。</p>
+    <!-- Stats row (mobile fallback) -->
+    <div class="stats-row">
+        <div class="stat-item">
+            <div class="stat-item-icon blue">🗝️</div>
+            <div class="stat-item-body">
+                <div class="val blue" id="stat-user-m">—</div>
+                <div class="lbl">第一章通关人数</div>
+            </div>
         </div>
-        <div class="intro-card c2">
-            <span class="intro-card-icon">👑</span>
-            <h3>CH.2 · LEGEND PEAK</h3>
-            <p>攀登最终的秘境高塔，突破重重守卫，摘取传说中的王冠，成为真正的迷境传奇。</p>
+        <div class="stat-item">
+            <div class="stat-item-icon gold">👑</div>
+            <div class="stat-item-body">
+                <div class="val gold" id="stat-root-m">—</div>
+                <div class="lbl">第二章通关人数</div>
+            </div>
         </div>
-        <div class="intro-card c3">
-            <span class="intro-card-icon">⚡</span>
-            <h3>LIVE RANKING</h3>
-            <p>每位完成关卡的玩家都将上榜，榜单每 30 秒自动刷新，实时呈现最新英雄排名。</p>
-        </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats">
-        <div class="stat">
-            <div class="stat-label">🗝️ CH.1 通关人数</div>
-            <div class="stat-value c-cyan" id="stat-user">—</div>
-        </div>
-        <div class="stat">
-            <div class="stat-label">👑 CH.2 通关人数</div>
-            <div class="stat-value c-yellow" id="stat-root">—</div>
-        </div>
-        <div class="stat">
-            <div class="stat-label">🌟 全章节通关</div>
-            <div class="stat-value c-green" id="stat-both">—</div>
+        <div class="stat-item">
+            <div class="stat-item-icon green">🌟</div>
+            <div class="stat-item-body">
+                <div class="val green" id="stat-both-m">—</div>
+                <div class="lbl">全章节通关人数</div>
+            </div>
         </div>
     </div>
 
     <!-- Boards -->
+    <div class="sec-title">
+        <div class="sec-title-icon blue">🏅</div>
+        总排行榜
+        <span style="font-size:0.75rem;font-weight:400;color:var(--text-mut);margin-left:4px;" id="total-hint"></span>
+    </div>
+
     <div class="boards">
 
+        <!-- Board 1 -->
         <div class="board lv1">
             <div class="board-header">
                 <div class="bh-left">
@@ -541,22 +447,30 @@
                 <div class="bh-badge" id="user-badge">0 人</div>
             </div>
             <div class="board-sub">迷境入门 · 找到隐藏钥匙，解锁迷宫大门</div>
+            <div class="podium-strip" id="user-podium" style="display:none"></div>
             <table>
-                <thead><tr><th>RANK</th><th>PLAYER</th><th>TIME</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>排名</th>
+                        <th>用户名</th>
+                        <th>通关时间</th>
+                    </tr>
+                </thead>
                 <tbody id="user-body">
                     <tr><td colspan="3"><div class="empty">
                         <span class="empty-emoji">🗺️</span>
-                        <h3>NO RECORDS YET</h3>
+                        <h3>暂无通关记录</h3>
                         <p>成为第一个完成第一章的勇者！</p>
                     </div></td></tr>
                 </tbody>
             </table>
             <div class="board-foot">
-                <span>AUTO REFRESH: 30S</span>
+                <span>每 30 秒自动刷新</span>
                 <span id="user-ts"></span>
             </div>
         </div>
 
+        <!-- Board 2 -->
         <div class="board lv2">
             <div class="board-header">
                 <div class="bh-left">
@@ -569,72 +483,64 @@
                 <div class="bh-badge" id="root-badge">0 人</div>
             </div>
             <div class="board-sub">传奇巅峰 · 攻克终极秘境，摘取传说王冠</div>
+            <div class="podium-strip" id="root-podium" style="display:none"></div>
             <table>
-                <thead><tr><th>RANK</th><th>PLAYER</th><th>TIME</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>排名</th>
+                        <th>用户名</th>
+                        <th>通关时间</th>
+                    </tr>
+                </thead>
                 <tbody id="root-body">
                     <tr><td colspan="3"><div class="empty">
                         <span class="empty-emoji">🏔️</span>
-                        <h3>NO RECORDS YET</h3>
+                        <h3>暂无通关记录</h3>
                         <p>成为第一个登顶传奇巅峰的勇者！</p>
                     </div></td></tr>
                 </tbody>
             </table>
             <div class="board-foot">
-                <span>AUTO REFRESH: 30S</span>
+                <span>每 30 秒自动刷新</span>
                 <span id="root-ts"></span>
             </div>
         </div>
 
     </div>
-</main>
+
+    <!-- Info cards -->
+    <div class="info-row">
+        <div class="info-card">
+            <div class="sec-title" style="margin-bottom:10px;">
+                <div class="sec-title-icon blue">ℹ</div>
+                排行说明
+            </div>
+            <p>
+                排行榜根据用户在平台上的访问和解题情况进行排名统计。
+                每个用户的排名会根据最新的解题数量和时间进行计算。
+                榜单会<strong>定期更新</strong>，你可以在此查看自己的排名和其他用户的排名。
+            </p>
+        </div>
+        <div class="info-card">
+            <div class="sec-title" style="margin-bottom:10px;">
+                <div class="sec-title-icon gold">🎮</div>
+                关卡说明
+            </div>
+            <p>
+                <strong>第一章（迷境入门）</strong>：探索神秘的地下迷宫，找到隐藏的钥匙，解锁通往下一层的大门。<br>
+                <strong>第二章（传奇巅峰）</strong>：攀登最终秘境高塔，突破重重守卫，摘取传说中的王冠，成为迷境传奇。
+            </p>
+        </div>
+    </div>
+
+</div><!-- /.page -->
 
 <footer>
-    <div>[ 🗺️ MAZEQUEST · 迷境探索 · © 2024 ]</div>
-    <div>GAME ENTRY: <a href="{{ challenge_url }}">{{ challenge_url }}</a></div>
+    <div>🗺️ MazeQuest · 迷境探索 &nbsp;|&nbsp; 版权所有 © 2024</div>
+    <div>游戏入口: <a href="{{ challenge_url }}">{{ challenge_url }}</a></div>
 </footer>
 
 <script>
-    /* ── Pixel star field ── */
-    (function () {
-        const canvas = document.getElementById('starfield');
-        const ctx    = canvas.getContext('2d');
-        let W, H, stars;
-
-        function resize() {
-            W = canvas.width  = window.innerWidth;
-            H = canvas.height = window.innerHeight;
-        }
-
-        function mkStars(n) {
-            stars = Array.from({ length: n }, () => ({
-                x:  Math.random() * W,
-                y:  Math.random() * H,
-                sz: Math.random() < 0.7 ? 1 : 2,
-                a:  Math.random(),
-                da: (Math.random() * 0.006 + 0.002) * (Math.random() < 0.5 ? 1 : -1),
-            }));
-        }
-
-        const MAX_STAR_OPACITY = 0.6;
-
-        function draw() {
-            ctx.clearRect(0, 0, W, H);
-            for (const s of stars) {
-                s.a += s.da;
-                if (s.a > 1 || s.a < 0) s.da = -s.da;
-                ctx.fillStyle = `rgba(180,180,255,${s.a * MAX_STAR_OPACITY})`;
-                ctx.fillRect(s.x, s.y, s.sz, s.sz);
-            }
-            requestAnimationFrame(draw);
-        }
-
-        resize();
-        mkStars(120);
-        draw();
-        window.addEventListener('resize', () => { resize(); mkStars(120); });
-    })();
-
-    /* ── Leaderboard ── */
     const MEDALS  = ['🥇', '🥈', '🥉'];
     const ROW_CLS = ['r1', 'r2', 'r3'];
 
@@ -649,13 +555,38 @@
         return esc(s.substring(0, 2).toUpperCase()) || '??';
     }
 
+    function renderPodium(podiumId, entries) {
+        const el = document.getElementById(podiumId);
+        if (!entries || entries.length === 0) {
+            el.style.display = 'none';
+            return;
+        }
+        const top = entries.slice(0, Math.min(3, entries.length));
+        // Arrange: p2 p1 p3 via CSS order
+        const slots = [
+            { cls: 'p1', idx: 0 },
+            { cls: 'p2', idx: 1 },
+            { cls: 'p3', idx: 2 },
+        ].filter(s => top[s.idx]);
+        el.innerHTML = slots.map(s => {
+            const e = top[s.idx];
+            return `<div class="podium-item ${s.cls}">
+                <div class="podium-medal">${MEDALS[s.idx]}</div>
+                <div class="podium-avatar">${initials(e.name)}</div>
+                <div class="podium-name" title="${esc(e.name)}">${esc(e.name)}</div>
+                <div class="podium-time">${esc(e.time)}</div>
+            </div>`;
+        }).join('');
+        el.style.display = top.length >= 2 ? 'flex' : 'none'; // need at least 2 for a meaningful podium layout
+    }
+
     function renderBoard(tbodyId, entries) {
         const tbody  = document.getElementById(tbodyId);
         const isUser = tbodyId === 'user-body';
         if (!entries || entries.length === 0) {
             tbody.innerHTML = `<tr><td colspan="3"><div class="empty">
                 <span class="empty-emoji">${isUser ? '🗺️' : '🏔️'}</span>
-                <h3>NO RECORDS YET</h3>
+                <h3>暂无通关记录</h3>
                 <p>成为第一个完成${isUser ? '第一章' : '第二章'}的勇者！</p>
             </div></td></tr>`;
             return;
@@ -664,7 +595,7 @@
             <tr class="${ROW_CLS[i] || ''}">
                 <td class="td-rank">${i < 3
                     ? `<span class="medal">${MEDALS[i]}</span>`
-                    : `<span class="rank-n">#${e.rank}</span>`
+                    : `<span class="rank-n">${e.rank}</span>`
                 }</td>
                 <td><div class="td-user">
                     <div class="avatar">${initials(e.name)}</div>
@@ -678,12 +609,22 @@
         return new Date().toLocaleTimeString('zh-CN', { hour12: false });
     }
 
+    function setStats(uLen, rLen, both) {
+        ['stat-user', 'stat-user-m'].forEach(id => { document.getElementById(id).textContent = uLen; });
+        ['stat-root', 'stat-root-m'].forEach(id => { document.getElementById(id).textContent = rLen; });
+        ['stat-both', 'stat-both-m'].forEach(id => { document.getElementById(id).textContent = both; });
+        const hint = document.getElementById('total-hint');
+        if (hint) hint.textContent = `共 ${uLen + rLen} 条记录`;
+    }
+
     async function refresh() {
         try {
             const resp = await fetch('/api/leaderboard');
             if (!resp.ok) throw new Error('HTTP ' + resp.status);
             const data = await resp.json();
 
+            renderPodium('user-podium', data.user);
+            renderPodium('root-podium', data.root);
             renderBoard('user-body', data.user);
             renderBoard('root-body', data.root);
 
@@ -692,20 +633,29 @@
             const rootSet = new Set((data.root || []).map(e => e.name));
             const both    = (data.user || []).filter(e => rootSet.has(e.name)).length;
 
-            document.getElementById('stat-user').textContent  = uLen;
-            document.getElementById('stat-root').textContent  = rLen;
-            document.getElementById('stat-both').textContent  = both;
+            setStats(uLen, rLen, both);
             document.getElementById('user-badge').textContent = uLen + ' 人';
             document.getElementById('root-badge').textContent = rLen + ' 人';
 
             const t = nowStr();
             document.getElementById('nav-time').textContent = t;
-            document.getElementById('user-ts').textContent  = 'UPDATED ' + t;
-            document.getElementById('root-ts').textContent  = 'UPDATED ' + t;
+            document.getElementById('user-ts').textContent  = '更新于 ' + t;
+            document.getElementById('root-ts').textContent  = '更新于 ' + t;
         } catch (err) {
             console.error('Leaderboard fetch error:', err);
         }
     }
+
+    // Breakpoint must match the CSS @media (max-width: 980px) rule
+    const MOBILE_BREAKPOINT = 980;
+
+    // Hide desktop stats row on mobile (show inline stat-cards in hero instead)
+    function syncStatsVisibility() {
+        const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+        document.querySelector('.stats-row').style.display = isMobile ? 'flex' : 'none';
+    }
+    syncStatsVisibility();
+    window.addEventListener('resize', syncStatsVisibility);
 
     refresh();
     setInterval(refresh, 30000);
