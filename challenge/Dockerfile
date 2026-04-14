@@ -24,11 +24,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 # polkit CVE-2021-4034 patch (USN-5252-1, January 2022) — so that:
 #   • Packages are always resolvable regardless of mirror/EOL status.
 #   • The vulnerable polkit version required for the PwnKit CTF stage is installed.
+# Only the base "focal" pocket is listed; focal-updates and focal-security are
+# intentionally omitted because (a) those pockets are not available at this
+# snapshot timestamp and (b) we must NOT pull in the patched polkit version.
 # Acquire::Check-Valid-Until=false is required because the snapshot Release files
 # have a ValidUntil timestamp that has long since passed.
-RUN printf 'deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main restricted universe multiverse\n\
-deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-updates main restricted universe multiverse\n\
-deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-security main restricted universe multiverse\n' \
+RUN printf 'deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main restricted universe multiverse\n' \
     > /etc/apt/sources.list && \
     printf 'Acquire::Check-Valid-Until "false";\nAcquire::https::Verify-Peer "false";\nAcquire::https::Verify-Host "false";\n' \
     > /etc/apt/apt.conf.d/99snapshot
