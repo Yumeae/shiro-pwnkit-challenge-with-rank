@@ -38,16 +38,22 @@ RUN printf 'deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main r
 # polkit is intentionally kept at the Ubuntu 20.04 default version which is
 # vulnerable to CVE-2021-4034 (PwnKit). Do NOT run apt-get upgrade.
 #
-# libpam-systemd is intentionally omitted: it depends on systemd and
-# systemd-sysv which cannot be installed inside a Docker container.
-# policykit-1 installs correctly without it.
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    openjdk-8-jre \
-    policykit-1 \
-    sudo \
-    bash \
-    && rm -rf /var/lib/apt/lists/*
+# policykit-1 hard-depends on libpam-systemd which in turn requires systemd —
+# impossible to install inside a Docker container via the normal apt resolver.
+# Workaround: install every other package first, then download the policykit-1
+# deb and force-install it with dpkg --force-depends to skip the unsatisfiable
+# libpam-systemd dependency.  pkexec still functions correctly without the
+# PAM-systemd module present.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        openjdk-8-jre \
+        sudo \
+        bash && \
+    apt-get download policykit-1 && \
+    dpkg --force-depends -i policykit-1_*.deb && \
+    rm -f policykit-1_*.deb && \
+    rm -rf /var/lib/apt/lists/*
 
 # Ensure pkexec retains its SUID bit (required for CVE-2021-4034)
 RUN chmod u+s /usr/bin/pkexec
