@@ -7,8 +7,14 @@
 
 ## Purpose
 
+> **Note on Maven alerts:** `pom.xml` and `src/` are not tracked in this
+> repository. The vulnerable Shiro 1.2.4 application is shipped as a
+> pre-built binary (`challenge/app.jar`) so that no Maven manifest with
+> vulnerable coordinates appears in the dependency tree. Source code for
+> reference is in `challenge/src-reference/`.
+
 This project is a **Capture-The-Flag (CTF) challenge** platform.
-The application is **intentionally vulnerable** to two specific CVEs as the
+The challenge container is **intentionally vulnerable** to two specific CVEs as the
 challenge objectives.  The vulnerable dependencies are not mistakes — they
 are the challenge itself.
 
