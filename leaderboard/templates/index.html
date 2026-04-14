@@ -12,17 +12,17 @@
         * { box-sizing: border-box; }
 
         body {
-            background-color: #212529;
+            background-color: #f8f8f8;
             font-family: 'Press Start 2P', monospace;
-            color: #fff;
+            color: #212529;
             min-height: 100vh;
             margin: 0;
         }
 
         /* ── Nav ── */
         nav {
-            background-color: #000;
-            border-bottom: 4px solid #fff;
+            background-color: #fff;
+            border-bottom: 4px solid #212529;
             padding: 12px 24px;
             display: flex;
             align-items: center;
@@ -36,8 +36,8 @@
             align-items: center;
             gap: 10px;
             text-decoration: none;
-            color: #fff;
-            font-size: 0.65rem;
+            color: #212529;
+            font-size: 0.75rem;
             white-space: nowrap;
         }
         .nav-brand-icon { font-size: 1.2rem; }
@@ -46,14 +46,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.5rem;
-            color: #92cc41;
+            font-size: 0.6rem;
+            color: #209c00;
             white-space: nowrap;
         }
         .live-dot {
             display: inline-block;
             width: 8px; height: 8px;
-            background: #92cc41;
+            background: #209c00;
             animation: blink 1.2s step-start infinite;
         }
         @keyframes blink {
@@ -62,7 +62,7 @@
         }
 
         .nav-btn {
-            font-size: 0.45rem;
+            font-size: 0.55rem;
         }
 
         /* ── Page ── */
@@ -78,14 +78,14 @@
             margin-bottom: 40px;
         }
         .hero h1 {
-            font-size: 1rem;
-            color: #ffa500;
+            font-size: 1.1rem;
+            color: #e76e00;
             margin-bottom: 12px;
-            text-shadow: 4px 4px #000;
+            text-shadow: 4px 4px #ccc;
         }
         .hero p {
-            font-size: 0.5rem;
-            color: #ccc;
+            font-size: 0.65rem;
+            color: #555;
             line-height: 1.8;
         }
 
@@ -108,12 +108,12 @@
             margin-bottom: 8px;
         }
         .stat-box .lbl {
-            font-size: 0.4rem;
-            color: #aaa;
+            font-size: 0.52rem;
+            color: #555;
         }
         .val-blue   { color: #209cee; }
-        .val-gold   { color: #ffa500; }
-        .val-green  { color: #92cc41; }
+        .val-gold   { color: #e76e00; }
+        .val-green  { color: #209c00; }
 
         /* ── Boards ── */
         .boards {
@@ -123,15 +123,15 @@
         }
 
         .board-title {
-            font-size: 0.55rem;
+            font-size: 0.65rem;
             margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .board-count {
-            font-size: 0.4rem;
-            color: #92cc41;
+            font-size: 0.52rem;
+            color: #209c00;
             margin-left: auto;
         }
 
@@ -142,34 +142,34 @@
         .board-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.45rem;
+            font-size: 0.58rem;
         }
         .board-table thead th {
             padding: 8px 12px;
             text-align: left;
-            color: #aaa;
-            border-bottom: 4px solid #fff;
+            color: #555;
+            border-bottom: 4px solid #212529;
             white-space: nowrap;
         }
         .board-table thead th:last-child { text-align: right; }
         .board-table tbody td {
             padding: 8px 12px;
-            border-bottom: 2px solid #555;
+            border-bottom: 2px solid #ddd;
             vertical-align: middle;
         }
         .board-table tbody td:last-child { text-align: right; }
         .board-table tbody tr:last-child td { border-bottom: none; }
-        .board-table tbody tr:hover { background: rgba(255,255,255,0.06); }
+        .board-table tbody tr:hover { background: rgba(0,0,0,0.04); }
 
         .medal { font-size: 0.9rem; }
-        .rank-n { color: #aaa; }
+        .rank-n { color: #666; }
 
-        .uname { color: #fff; }
+        .uname { color: #212529; }
 
         .td-time {
             font-family: monospace;
-            color: #aaa;
-            font-size: 0.4rem;
+            color: #555;
+            font-size: 0.55rem;
         }
 
         /* ── Podium ── */
@@ -189,16 +189,16 @@
         }
         .podium-medal { font-size: 1.2rem; }
         .podium-name {
-            font-size: 0.38rem;
-            color: #fff;
+            font-size: 0.5rem;
+            color: #212529;
             max-width: 80px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
         .podium-time {
-            font-size: 0.32rem;
-            color: #aaa;
+            font-size: 0.42rem;
+            color: #555;
             font-family: monospace;
         }
 
@@ -206,18 +206,18 @@
         .empty {
             text-align: center;
             padding: 32px 20px;
-            color: #aaa;
+            color: #666;
         }
         .empty .empty-emoji { font-size: 2rem; display: block; margin-bottom: 12px; }
-        .empty h3 { font-size: 0.5rem; margin-bottom: 8px; color: #ccc; }
-        .empty p { font-size: 0.4rem; line-height: 1.8; }
+        .empty h3 { font-size: 0.6rem; margin-bottom: 8px; color: #444; }
+        .empty p { font-size: 0.52rem; line-height: 1.8; }
 
         /* ── Board footer ── */
         .board-foot {
             display: flex;
             justify-content: space-between;
-            font-size: 0.38rem;
-            color: #777;
+            font-size: 0.5rem;
+            color: #888;
             padding: 8px 4px 0;
         }
 
@@ -226,7 +226,7 @@
             .boards { grid-template-columns: 1fr; }
         }
         @media (max-width: 600px) {
-            .hero h1 { font-size: 0.65rem; }
+            .hero h1 { font-size: 0.8rem; }
             nav { padding: 10px 14px; }
             .page { padding: 20px 12px 48px; }
         }
