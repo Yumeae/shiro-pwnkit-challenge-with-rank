@@ -18,6 +18,11 @@ FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Ubuntu 20.04 (Focal) reached EOL in April 2025; packages moved to old-releases.
+RUN sed -i \
+    's|http://archive.ubuntu.com|http://old-releases.ubuntu.com|g; s|http://security.ubuntu.com|http://old-releases.ubuntu.com|g' \
+    /etc/apt/sources.list
+
 # Install only the runtime packages needed.
 # polkit is intentionally kept at the Ubuntu 20.04 default version which is
 # vulnerable to CVE-2021-4034 (PwnKit). Do NOT run apt-get upgrade.
