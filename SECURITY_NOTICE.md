@@ -1,72 +1,65 @@
-# Security Notice — Intentionally Vulnerable Application
+# 安全声明 — 故意引入漏洞的应用程序
 
-> **⚠ WARNING: This repository contains software that is deliberately
-> insecure. It must only be deployed in a fully isolated environment.**
-
----
-
-## Purpose
-
-> **Note on Maven alerts:** `pom.xml` and `src/` are not tracked in this
-> repository. The vulnerable Shiro 1.2.4 application is shipped as a
-> pre-built binary (`challenge/app.jar`) so that no Maven manifest with
-> vulnerable coordinates appears in the dependency tree. Source code for
-> reference is in `challenge/src-reference/`.
-
-This project is a **Capture-The-Flag (CTF) challenge** platform.
-The challenge container is **intentionally vulnerable** to two specific CVEs as the
-challenge objectives.  The vulnerable dependencies are not mistakes — they
-are the challenge itself.
+> **⚠ 警告：本仓库包含**故意设计为不安全**的软件，必须仅在完全隔离的环境中部署。**
 
 ---
 
-## Intentionally Vulnerable Dependencies
+## 用途说明
 
-### 1. `org.apache.shiro:shiro-spring` — pinned to `1.2.4`
+> **关于 Maven 安全告警的说明：** `pom.xml` 和 `src/` 未纳入本仓库版本控制。
+> 存在漏洞的 Shiro 1.2.4 应用以预编译二进制文件（`challenge/app.jar`）的形式提供，
+> 以避免依赖树中出现包含漏洞坐标的 Maven 清单。参考源码位于 `challenge/src-reference/`。
 
-| Attribute | Detail |
-|-----------|--------|
+本项目是一个 **夺旗赛（CTF）挑战**平台。
+挑战容器**故意对两个特定 CVE 保持可利用状态**，这些漏洞是挑战目标本身，
+并非失误引入——它们就是挑战的核心所在。
+
+---
+
+## 故意保留的漏洞依赖
+
+### 1. `org.apache.shiro:shiro-spring` — 固定版本 `1.2.4`
+
+| 属性 | 详情 |
+|------|------|
 | **CVE** | CVE-2016-4437 |
-| **Vulnerability** | Apache Shiro ≤ 1.2.4 ships with a **hardcoded AES-128-CBC key** (`kPH+bIxk5D2deZiIxcaaaA==`) used to encrypt the `rememberMe` cookie. An attacker with network access can forge a malicious cookie containing a serialized Java payload and achieve **Remote Code Execution**. |
-| **Why kept** | This IS Stage 1 of the challenge. Upgrading to 1.2.5+ (random key) or 1.7.1 (auth-bypass fix) would remove the entire attack surface. |
-| **Patched upstream** | ≥ 1.2.5 (key randomisation), ≥ 1.7.1 (auth-bypass fixes) |
+| **漏洞描述** | Apache Shiro ≤ 1.2.4 内置**硬编码 AES-128-CBC 密钥**（`kPH+bIxk5D2deZiIxcaaaA==`）用于加密 `rememberMe` Cookie。能够访问网络的攻击者可伪造包含序列化 Java Payload 的恶意 Cookie，实现**远程代码执行**。 |
+| **保留原因** | 这正是挑战第一阶段的核心。升级至 1.2.5+（随机密钥）或 1.7.1（认证绕过修复）会彻底消除攻击面。 |
+| **上游修复版本** | ≥ 1.2.5（密钥随机化），≥ 1.7.1（认证绕过修复） |
 
-### 2. `commons-collections:commons-collections` — pinned to `3.2.1`
+### 2. `commons-collections:commons-collections` — 固定版本 `3.2.1`
 
-| Attribute | Detail |
-|-----------|--------|
-| **CVEs** | CVE-2015-6420, CVE-2015-7501 |
-| **Vulnerability** | The `InvokerTransformer` gadget chain in Commons Collections ≤ 3.2.1 enables arbitrary code execution when a malicious object graph is deserialized. This is the **gadget chain** used to weaponize the Shiro rememberMe RCE. |
-| **Why kept** | Without this gadget chain the Shiro cookie payload cannot execute commands. Upgrading to 3.2.2 (serialisation filter) or 4.1 breaks the exploit. |
-| **Patched upstream** | ≥ 3.2.2, ≥ 4.1 |
-
----
-
-## Isolation Requirements
-
-Because this application is deliberately exploitable, **it must never be
-reachable from untrusted networks**.  Minimum isolation checklist:
-
-- [ ] Run exclusively inside Docker (provided `docker-compose.yml`)
-- [ ] Bind challenge port `8080` to `127.0.0.1` or a private/VPN network only
-- [ ] Do **not** expose to the public internet
-- [ ] Use a dedicated, disposable VM or cloud instance
-- [ ] Apply network-level firewall rules to restrict access to authorised
-      participants only
-- [ ] Destroy the environment after the CTF event ends
+| 属性 | 详情 |
+|------|------|
+| **CVE** | CVE-2015-6420、CVE-2015-7501 |
+| **漏洞描述** | Commons Collections ≤ 3.2.1 中的 `InvokerTransformer` Gadget 链，在反序列化恶意对象图时可实现任意代码执行。这是武器化 Shiro RememberMe RCE 所使用的 **Gadget 链**。 |
+| **保留原因** | 没有此 Gadget 链，Shiro Cookie Payload 无法执行命令。升级至 3.2.2（序列化过滤器）或 4.1 会导致漏洞利用失效。 |
+| **上游修复版本** | ≥ 3.2.2，≥ 4.1 |
 
 ---
 
-## Scope
+## 隔离要求
 
-The vulnerabilities described above exist **by design** within the
-`challenge/` Docker container.  The `leaderboard/` service contains no
-intentionally vulnerable code; its dependencies should be kept up to date.
+由于本应用故意可被利用，**绝对不能让不受信任的网络访问到它**。
+最低隔离检查清单：
+
+- [ ] 仅在 Docker 内运行（使用提供的 `docker-compose.yml`）
+- [ ] 将挑战端口 `8080` 绑定至 `127.0.0.1` 或私有/VPN 网络
+- [ ] **不得**暴露至公共互联网
+- [ ] 使用专用的、一次性的虚拟机或云实例
+- [ ] 在网络层面应用防火墙规则，将访问限制为仅授权参与者
+- [ ] CTF 活动结束后销毁该环境
 
 ---
 
-## Reporting Real Bugs
+## 范围说明
 
-If you discover a **non-intentional** security issue (e.g. a vulnerability in
-the leaderboard service or the Docker configuration that could allow container
-escape), please open a GitHub issue labelled `security`.
+上述漏洞**故意**存在于 `challenge/` Docker 容器中。
+`leaderboard/` 服务不包含故意引入的漏洞代码，其依赖应保持最新状态。
+
+---
+
+## 反馈真实漏洞
+
+如果你发现**非故意**的安全问题（例如排行榜服务或 Docker 配置中可能导致容器逃逸的漏洞），
+请在 GitHub 上提交带有 `security` 标签的 Issue。
