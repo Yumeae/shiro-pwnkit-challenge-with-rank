@@ -223,8 +223,7 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    var LEADERBOARD_API = /*[[${leaderboardUrl}]]*/ 'http://localhost:80';
-    LEADERBOARD_API = LEADERBOARD_API.replace(/\/$/, '') + '/api/leaderboard';
+    var LEADERBOARD_API = (/*[[${leaderboardUrl}]]*/ 'http://localhost:80').replace(/\/$/, '') + '/api/leaderboard';
 
     var MEDALS = ['🥇', '🥈', '🥉'];
 
