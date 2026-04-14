@@ -3,209 +3,231 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shiro + PwnKit 挑战赛 — 排行榜</title>
+    <title>迷境探索 · MazeQuest — 全服排行榜</title>
     <style>
         :root {
-            --bg:          #f5f0e8;
-            --white:       #ffffff;
-            --black:       #111827;
-            --orange:      #e07b39;
-            --blue:        #3b5bdb;
-            --blue-light:  #dbe4ff;
-            --green:       #16a34a;
-            --border:      #111827;
-            --shadow:      4px 4px 0 #111827;
-            --muted:       #6b7280;
-            --faint:       #f3f4f6;
+            --bg:         #0d0f1a;
+            --card:       #151829;
+            --border:     #2a2f4a;
+            --accent1:    #7c3aed;
+            --accent2:    #f59e0b;
+            --accent1-l:  rgba(124,58,237,0.12);
+            --accent2-l:  rgba(245,158,11,0.12);
+            --text:       #e2e8f0;
+            --muted:      #64748b;
+            --green:      #22c55e;
+            --white:      #ffffff;
         }
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: var(--bg);
-            background-image: radial-gradient(circle, rgba(0,0,0,0.13) 1px, transparent 1px);
-            background-size: 22px 22px;
+            background: var(--bg);
             font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans SC',
                          'PingFang SC', 'Microsoft YaHei', sans-serif;
-            color: var(--black);
+            color: var(--text);
             min-height: 100vh;
         }
 
-        /* ── Navbar ─── */
+        /* ── Nav ─── */
         nav {
             position: sticky; top: 0; z-index: 50;
-            background: var(--white);
-            border-bottom: 2.5px solid var(--border);
-            box-shadow: 0 3px 0 var(--border);
-            height: 62px; padding: 0 32px;
-            display: flex; align-items: center; gap: 16px;
+            background: rgba(13,15,26,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            height: 60px; padding: 0 32px;
+            display: flex; align-items: center; gap: 14px;
         }
         .nav-logo {
             display: flex; align-items: center; gap: 10px;
-            font-weight: 900; font-size: 1.05rem; letter-spacing: -0.3px;
-            text-decoration: none; color: var(--black);
+            text-decoration: none; color: var(--text);
+            font-weight: 800; font-size: 1.05rem;
         }
-        .nav-logo-icon {
-            width: 36px; height: 36px;
-            background: var(--orange); border: 2px solid var(--border);
+        .nav-gem {
+            width: 34px; height: 34px; border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent1), #a855f7);
             display: flex; align-items: center; justify-content: center;
             font-size: 1rem; flex-shrink: 0;
         }
-        .nav-chip {
-            padding: 5px 12px; font-size: 0.75rem; font-weight: 700;
-            border: 2px solid var(--border);
+        .nav-tag {
+            padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700;
+            border: 1px solid;
         }
-        .nav-chip.orange  { background: var(--orange); color: #fff; }
-        .nav-chip.outline { background: transparent; color: var(--black); }
-        .nav-challenge {
-            margin-left: auto; display: flex; align-items: center;
+        .nav-tag.purple { background: var(--accent1-l); border-color: var(--accent1); color: #a78bfa; }
+        .nav-tag.amber  { background: var(--accent2-l); border-color: var(--accent2); color: #fbbf24; }
+        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+        .nav-play-btn {
+            padding: 7px 18px; border-radius: 6px;
+            background: linear-gradient(135deg, var(--accent1), #a855f7);
+            color: #fff; font-size: 0.8rem; font-weight: 700;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: opacity 0.15s;
         }
-        .nav-challenge-btn {
-            padding: 7px 16px; background: var(--orange); color: #fff;
-            border: 2px solid var(--border);
-            font-size: 0.8rem; font-weight: 700;
-            text-decoration: none; white-space: nowrap;
-        }
-        .nav-challenge-btn:hover { opacity: 0.9; }
+        .nav-play-btn:hover { opacity: 0.88; }
         .nav-live {
-            margin-left: 16px; display: flex; align-items: center; gap: 8px;
-            font-size: 0.78rem; font-weight: 600; color: var(--muted);
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.75rem; color: var(--muted);
         }
         .live-dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: var(--green); flex-shrink: 0;
-            animation: live-pulse 2s ease-in-out infinite;
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s ease-in-out infinite;
         }
-        @keyframes live-pulse {
+        @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50%       { opacity: 0.4; transform: scale(0.7); }
         }
-        #nav-time { color: var(--black); font-weight: 700; }
+        #nav-time { color: var(--text); font-weight: 700; }
 
         /* ── Layout ─── */
-        main { max-width: 1160px; margin: 0 auto; padding: 44px 24px 80px; }
+        main { max-width: 1160px; margin: 0 auto; padding: 52px 24px 80px; }
 
         /* ── Hero ─── */
-        .hero { margin-bottom: 36px; }
-        .hero-label {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 4px 10px; border: 2px solid var(--border);
-            font-size: 0.72rem; font-weight: 700;
-            background: var(--faint); margin-bottom: 12px;
+        .hero { margin-bottom: 48px; }
+        .hero-eyebrow {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 5px 14px; border-radius: 20px;
+            border: 1px solid var(--accent1); background: var(--accent1-l);
+            font-size: 0.75rem; font-weight: 700; color: #a78bfa;
+            margin-bottom: 18px;
         }
         .hero h1 {
-            font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 900;
-            letter-spacing: -0.8px; line-height: 1.15;
+            font-size: clamp(1.8rem, 4.5vw, 2.6rem); font-weight: 900;
+            letter-spacing: -1px; line-height: 1.15; color: var(--white);
         }
-        .hero h1 em { font-style: normal; color: var(--orange); }
-        .hero p { margin-top: 10px; font-size: 0.85rem; color: var(--muted); font-family: monospace; }
+        .hero h1 em { font-style: normal; color: #a78bfa; }
+        .hero-desc {
+            margin-top: 14px; max-width: 620px;
+            font-size: 0.92rem; color: var(--muted); line-height: 1.75;
+        }
+
+        /* ── Game intro cards ─── */
+        .intro-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px; margin-bottom: 48px;
+        }
+        .intro-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 22px 24px;
+            transition: border-color 0.2s;
+        }
+        .intro-card:hover { border-color: var(--accent1); }
+        .intro-card-icon {
+            width: 44px; height: 44px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; margin-bottom: 14px;
+        }
+        .intro-card.c1 .intro-card-icon { background: var(--accent1-l); }
+        .intro-card.c2 .intro-card-icon { background: var(--accent2-l); }
+        .intro-card.c3 .intro-card-icon { background: rgba(34,197,94,0.12); }
+        .intro-card h3 { font-size: 0.92rem; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+        .intro-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.65; }
 
         /* ── Stats ─── */
-        .stats { display: flex; gap: 16px; margin-bottom: 36px; flex-wrap: wrap; }
+        .stats { display: flex; gap: 14px; margin-bottom: 36px; flex-wrap: wrap; }
         .stat {
             flex: 1; min-width: 150px;
-            background: var(--white); border: 2.5px solid var(--border);
-            box-shadow: var(--shadow); padding: 18px 22px;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 18px 22px;
         }
         .stat-label {
-            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px;
+            font-size: 0.72rem; font-weight: 600; color: var(--muted);
+            margin-bottom: 8px; letter-spacing: 0.3px;
         }
-        .stat-value { font-size: 2rem; font-weight: 900; line-height: 1; }
-        .stat-value.c-blue   { color: var(--blue); }
-        .stat-value.c-orange { color: var(--orange); }
-        .stat-value.c-black  { color: var(--black); }
+        .stat-value { font-size: 2.2rem; font-weight: 900; line-height: 1; color: var(--white); }
+        .stat-value.c-purple { color: #a78bfa; }
+        .stat-value.c-amber  { color: #fbbf24; }
 
-        /* ── Boards grid ─── */
-        .boards { display: grid; grid-template-columns: repeat(auto-fit, minmax(430px, 1fr)); gap: 28px; }
-
-        /* ── Board card ─── */
+        /* ── Boards ─── */
+        .boards { display: grid; grid-template-columns: repeat(auto-fit, minmax(430px, 1fr)); gap: 24px; }
         .board {
-            background: var(--white); border: 2.5px solid var(--border);
-            box-shadow: var(--shadow); display: flex; flex-direction: column;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; display: flex; flex-direction: column;
+            overflow: hidden;
         }
         .board-header {
-            padding: 16px 20px; border-bottom: 2.5px solid var(--border);
+            padding: 16px 20px;
             display: flex; align-items: center; justify-content: space-between; gap: 12px;
         }
-        .board.user .board-header { background: var(--blue); }
-        .board.root .board-header { background: var(--orange); }
+        .board.lv1 .board-header { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+        .board.lv2 .board-header { background: linear-gradient(135deg, #b45309, #d97706); }
         .bh-left { display: flex; align-items: center; gap: 12px; }
         .bh-icon {
-            width: 38px; height: 38px;
-            background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.45);
+            width: 38px; height: 38px; border-radius: 8px;
+            background: rgba(255,255,255,0.15);
             display: flex; align-items: center; justify-content: center;
             font-size: 1.1rem; flex-shrink: 0;
         }
         .bh-title { color: #fff; }
         .bh-title h2 { font-size: 0.95rem; font-weight: 800; }
-        .bh-title sub { font-size: 0.68rem; opacity: 0.85; display: block; margin-top: 2px; }
+        .bh-title sub { font-size: 0.68rem; opacity: 0.8; display: block; margin-top: 2px; }
         .bh-badge {
-            background: rgba(0,0,0,0.18); border: 1.5px solid rgba(255,255,255,0.35);
-            padding: 5px 11px; font-size: 0.75rem; font-weight: 700;
+            background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 20px;
+            padding: 4px 12px; font-size: 0.75rem; font-weight: 700;
             color: #fff; white-space: nowrap; flex-shrink: 0;
         }
-        .board-cve {
-            padding: 9px 20px; background: #fafafa; border-bottom: 1.5px solid #e5e7eb;
-            font-size: 0.7rem; color: var(--muted); font-family: monospace;
+        .board-sub {
+            padding: 8px 20px; background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.7rem; color: var(--muted);
         }
 
         /* ── Table ─── */
         table { width: 100%; border-collapse: collapse; }
         thead th {
-            padding: 10px 20px; background: #f9fafb; border-bottom: 1.5px solid #e5e7eb;
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.6px; color: #9ca3af; text-align: left;
+            padding: 10px 20px; background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.6px; color: var(--muted); text-align: left;
         }
         thead th:last-child { text-align: right; }
-        tbody tr { border-bottom: 1px solid #f3f4f6; transition: background 0.1s; }
+        tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.1s; }
         tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: #f9fafb !important; }
-        tbody tr.r1 { background: #fffbeb; }
-        tbody tr.r2 { background: #f0f4ff; }
-        tbody tr.r3 { background: #fff7ed; }
-        td { padding: 13px 20px; font-size: 0.9rem; }
+        tbody tr:hover { background: rgba(255,255,255,0.03) !important; }
+        tbody tr.r1 { background: rgba(124,58,237,0.08); }
+        tbody tr.r2 { background: rgba(99,102,241,0.05); }
+        tbody tr.r3 { background: rgba(245,158,11,0.05); }
+        td { padding: 13px 20px; font-size: 0.88rem; }
         td:last-child { text-align: right; }
         .td-rank { width: 52px; }
-        .medal  { font-size: 1.15rem; }
-        .rank-n { font-weight: 700; color: #d1d5db; font-size: 0.88rem; }
+        .medal { font-size: 1.1rem; }
+        .rank-n { font-weight: 700; color: var(--muted); font-size: 0.85rem; }
         .td-user { display: flex; align-items: center; gap: 10px; }
         .avatar {
-            width: 30px; height: 30px; border: 1.5px solid var(--border);
+            width: 30px; height: 30px; border-radius: 6px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.7rem; font-weight: 800; flex-shrink: 0;
+            font-size: 0.68rem; font-weight: 800; flex-shrink: 0;
         }
-        .board.user .avatar { background: var(--blue-light); color: var(--blue); }
-        .board.root .avatar { background: #fff0e6; color: var(--orange); }
-        .uname { font-weight: 600; }
-        .td-time { font-family: monospace; font-size: 0.78rem; color: #9ca3af; }
+        .board.lv1 .avatar { background: var(--accent1-l); color: #a78bfa; }
+        .board.lv2 .avatar { background: var(--accent2-l); color: #fbbf24; }
+        .uname { font-weight: 600; color: var(--text); }
+        .td-time { font-family: monospace; font-size: 0.75rem; color: var(--muted); }
 
-        /* ── Empty state ─── */
+        /* ── Empty ─── */
         .empty { padding: 48px 20px; text-align: center; }
-        .empty-emoji { font-size: 2.8rem; margin-bottom: 10px; }
-        .empty h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
-        .empty p  { font-size: 0.78rem; color: var(--muted); line-height: 1.9; }
-        .empty code {
-            background: var(--faint); border: 1px solid #e5e7eb;
-            padding: 1px 6px; font-size: 0.75rem; color: var(--orange);
-        }
+        .empty-emoji { font-size: 2.5rem; margin-bottom: 10px; }
+        .empty h3 { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+        .empty p { font-size: 0.76rem; color: var(--muted); line-height: 1.8; }
 
         /* ── Board footer ─── */
         .board-foot {
-            margin-top: auto; padding: 10px 20px; background: #f9fafb;
-            border-top: 1.5px solid #e5e7eb;
+            margin-top: auto; padding: 9px 20px;
+            border-top: 1px solid var(--border);
             display: flex; justify-content: space-between;
-            font-size: 0.7rem; color: #9ca3af;
+            font-size: 0.68rem; color: var(--muted);
         }
 
         /* ── Site footer ─── */
-        footer { text-align: center; padding: 40px 20px; font-size: 0.75rem; color: #9ca3af; line-height: 2.2; }
-        footer a { color: var(--orange); font-weight: 700; text-decoration: none; }
+        footer {
+            text-align: center; padding: 40px 20px;
+            font-size: 0.73rem; color: var(--muted); line-height: 2.2;
+            border-top: 1px solid var(--border);
+        }
+        footer a { color: #a78bfa; text-decoration: none; }
 
-        /* ── Responsive ─── */
         @media (max-width: 920px) {
             .boards { grid-template-columns: 1fr; }
-            .hero h1 { font-size: 1.5rem; }
             nav { padding: 0 16px; }
-            main { padding: 28px 16px 60px; }
+            main { padding: 32px 16px 60px; }
         }
     </style>
 </head>
@@ -213,65 +235,86 @@
 
 <nav>
     <a class="nav-logo" href="#">
-        <div class="nav-logo-icon">⚡</div>
-        <span>Shiro + PwnKit</span>
+        <div class="nav-gem">🗺️</div>
+        <span>MazeQuest</span>
     </a>
-    <div class="nav-chip orange">排行榜</div>
-    <div class="nav-chip outline">CTF Challenge</div>
-    <div class="nav-challenge">
-        <a class="nav-challenge-btn" href="{{ challenge_url }}" target="_blank">⚡ 进入靶场</a>
-    </div>
-    <div class="nav-live">
-        <span class="live-dot"></span>
-        <span>实时更新</span>
-        <span id="nav-time"></span>
+    <div class="nav-tag purple">排行榜</div>
+    <div class="nav-tag amber">在线</div>
+    <div class="nav-right">
+        <a class="nav-play-btn" href="{{ challenge_url }}">▶ 进入游戏</a>
+        <div class="nav-live">
+            <span class="live-dot"></span>
+            <span>实时</span>
+            <span id="nav-time"></span>
+        </div>
     </div>
 </nav>
 
 <main>
     <div class="hero">
-        <div class="hero-label">🏆 Hall of Fame</div>
-        <h1>挑战赛 <em>排行榜</em></h1>
-        <p>CVE-2016-4437 · Apache Shiro RememberMe RCE &nbsp;+&nbsp; CVE-2021-4034 · PwnKit 提权</p>
+        <div class="hero-eyebrow">🏆 全服英雄榜</div>
+        <h1>迷境探索 <em>排行榜</em></h1>
+        <p class="hero-desc">
+            在 MazeQuest 的世界中，每一位勇者都在挑战未知的迷境。
+            完成关卡后，你的名字将永远铭刻在英雄榜上。
+            所有记录实时更新，快来挑战属于你的传奇！
+        </p>
+    </div>
+
+    <div class="intro-grid">
+        <div class="intro-card c1">
+            <div class="intro-card-icon">🗝️</div>
+            <h3>第一章 · 迷境入门</h3>
+            <p>探索神秘的地下迷宫，找到隐藏的钥匙，解锁通往下一层的大门，成为初级探险家。</p>
+        </div>
+        <div class="intro-card c2">
+            <div class="intro-card-icon">👑</div>
+            <h3>第二章 · 传奇巅峰</h3>
+            <p>攀登最终的秘境高塔，突破重重守卫，摘取传说中的王冠，成为真正的迷境传奇。</p>
+        </div>
+        <div class="intro-card c3">
+            <div class="intro-card-icon">⚡</div>
+            <h3>实时榜单</h3>
+            <p>每位完成关卡的玩家都将上榜，榜单每 30 秒自动刷新，实时呈现最新英雄排名。</p>
+        </div>
     </div>
 
     <div class="stats">
         <div class="stat">
-            <div class="stat-label">🔓 用户权限 解题人数</div>
-            <div class="stat-value c-blue" id="stat-user">—</div>
+            <div class="stat-label">🗝️ 第一章通关人数</div>
+            <div class="stat-value c-purple" id="stat-user">—</div>
         </div>
         <div class="stat">
-            <div class="stat-label">👑 ROOT 权限 解题人数</div>
-            <div class="stat-value c-orange" id="stat-root">—</div>
+            <div class="stat-label">👑 第二章通关人数</div>
+            <div class="stat-value c-amber" id="stat-root">—</div>
         </div>
         <div class="stat">
-            <div class="stat-label">🎯 完全解题人数</div>
-            <div class="stat-value c-black" id="stat-both">—</div>
+            <div class="stat-label">🌟 全章节通关人数</div>
+            <div class="stat-value" id="stat-both">—</div>
         </div>
     </div>
 
     <div class="boards">
 
-        <div class="board user">
+        <div class="board lv1">
             <div class="board-header">
                 <div class="bh-left">
-                    <div class="bh-icon">🔓</div>
+                    <div class="bh-icon">🗝️</div>
                     <div class="bh-title">
-                        <h2>用户权限排行榜</h2>
-                        <sub>Stage 1 — User Access</sub>
+                        <h2>第一章英雄榜</h2>
+                        <sub>Chapter 1 — Maze Explorer</sub>
                     </div>
                 </div>
                 <div class="bh-badge" id="user-badge">0 人</div>
             </div>
-            <div class="board-cve">CVE-2016-4437 :: Apache Shiro RememberMe Cookie 反序列化漏洞</div>
+            <div class="board-sub">迷境入门 · 找到隐藏钥匙，解锁迷宫大门</div>
             <table>
-                <thead><tr><th>排名</th><th>用户名</th><th>解题时间</th></tr></thead>
+                <thead><tr><th>排名</th><th>玩家</th><th>通关时间</th></tr></thead>
                 <tbody id="user-body">
                     <tr><td colspan="3"><div class="empty">
-                        <div class="empty-emoji">🔒</div>
-                        <h3>暂无解题记录</h3>
-                        <p>利用 Shiro RCE 获取 shell 后<br/>
-                           执行 <code>touch /home/ctf/players/YOUR_NAME</code></p>
+                        <div class="empty-emoji">🗺️</div>
+                        <h3>暂无通关记录</h3>
+                        <p>成为第一个完成第一章的勇者！</p>
                     </div></td></tr>
                 </tbody>
             </table>
@@ -281,26 +324,25 @@
             </div>
         </div>
 
-        <div class="board root">
+        <div class="board lv2">
             <div class="board-header">
                 <div class="bh-left">
                     <div class="bh-icon">👑</div>
                     <div class="bh-title">
-                        <h2>ROOT 权限排行榜</h2>
-                        <sub>Stage 2 — Root Access</sub>
+                        <h2>第二章英雄榜</h2>
+                        <sub>Chapter 2 — Legend Peak</sub>
                     </div>
                 </div>
                 <div class="bh-badge" id="root-badge">0 人</div>
             </div>
-            <div class="board-cve">CVE-2021-4034 :: Polkit pkexec 本地提权漏洞 (PwnKit)</div>
+            <div class="board-sub">传奇巅峰 · 攻克终极秘境，摘取传说王冠</div>
             <table>
-                <thead><tr><th>排名</th><th>用户名</th><th>解题时间</th></tr></thead>
+                <thead><tr><th>排名</th><th>玩家</th><th>通关时间</th></tr></thead>
                 <tbody id="root-body">
                     <tr><td colspan="3"><div class="empty">
-                        <div class="empty-emoji">🔑</div>
-                        <h3>暂无解题记录</h3>
-                        <p>PwnKit 提权至 root 后<br/>
-                           执行 <code>touch /root/players/YOUR_NAME</code></p>
+                        <div class="empty-emoji">🏔️</div>
+                        <h3>暂无通关记录</h3>
+                        <p>成为第一个登顶传奇巅峰的勇者！</p>
                     </div></td></tr>
                 </tbody>
             </table>
@@ -314,12 +356,8 @@
 </main>
 
 <footer>
-    <div>⚡ Shiro + PwnKit CTF 靶场 &nbsp;|&nbsp; 仅供学习与 CTF 练习使用</div>
-    <div>
-        靶场入口: <a href="{{ challenge_url }}" target="_blank">{{ challenge_url }}</a>
-        &nbsp;·&nbsp;
-        排行榜: <a href="http://localhost:80" target="_blank">:80</a>
-    </div>
+    <div>🗺️ MazeQuest · 迷境探索 &nbsp;|&nbsp; 版权所有 © 2024</div>
+    <div>游戏入口: <a href="{{ challenge_url }}">{{ challenge_url }}</a></div>
 </footer>
 
 <script>
@@ -342,12 +380,9 @@
         const isUser = tbodyId === 'user-body';
         if (!entries || entries.length === 0) {
             tbody.innerHTML = `<tr><td colspan="3"><div class="empty">
-                <div class="empty-emoji">${isUser ? '🔒' : '🔑'}</div>
-                <h3>暂无解题记录</h3>
-                <p>${isUser
-                    ? '利用 Shiro RCE 获取 shell 后<br/>执行 <code>touch /home/ctf/players/YOUR_NAME</code>'
-                    : 'PwnKit 提权至 root 后<br/>执行 <code>touch /root/players/YOUR_NAME</code>'
-                }</p>
+                <div class="empty-emoji">${isUser ? '🗺️' : '🏔️'}</div>
+                <h3>暂无通关记录</h3>
+                <p>成为第一个完成${isUser ? '第一章' : '第二章'}的勇者！</p>
             </div></td></tr>`;
             return;
         }
@@ -378,10 +413,10 @@
             renderBoard('user-body', data.user);
             renderBoard('root-body', data.root);
 
-            const uLen   = (data.user || []).length;
-            const rLen   = (data.root || []).length;
+            const uLen    = (data.user || []).length;
+            const rLen    = (data.root || []).length;
             const rootSet = new Set((data.root || []).map(e => e.name));
-            const both   = (data.user || []).filter(e => rootSet.has(e.name)).length;
+            const both    = (data.user || []).filter(e => rootSet.has(e.name)).length;
 
             document.getElementById('stat-user').textContent  = uLen;
             document.getElementById('stat-root').textContent  = rLen;

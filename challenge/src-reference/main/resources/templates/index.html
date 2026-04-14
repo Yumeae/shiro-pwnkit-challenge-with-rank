@@ -3,188 +3,191 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>控制台 — Shiro Challenge</title>
+    <title>MazeQuest — 玩家中心</title>
     <style>
         :root {
-            --bg:     #f5f0e8;
-            --white:  #ffffff;
-            --black:  #111827;
-            --orange: #e07b39;
-            --blue:   #3b5bdb;
-            --border: #111827;
-            --shadow: 4px 4px 0 #111827;
+            --bg:      #0d0f1a;
+            --card:    #151829;
+            --border:  #2a2f4a;
+            --accent1: #7c3aed;
+            --accent2: #f59e0b;
+            --accent1-l: rgba(124,58,237,0.12);
+            --accent2-l: rgba(245,158,11,0.12);
+            --text:    #e2e8f0;
+            --muted:   #64748b;
+            --white:   #ffffff;
         }
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: var(--bg);
-            background-image: radial-gradient(circle, rgba(0,0,0,0.13) 1px, transparent 1px);
-            background-size: 22px 22px;
+            background: var(--bg);
             font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans SC',
                          'PingFang SC', 'Microsoft YaHei', sans-serif;
-            color: var(--black); min-height: 100vh;
+            color: var(--text); min-height: 100vh;
         }
 
         /* ── Nav ─── */
         nav {
-            background: var(--white); border-bottom: 2.5px solid var(--border);
-            box-shadow: 0 3px 0 var(--border);
-            height: 62px; padding: 0 32px;
-            display: flex; align-items: center; gap: 16px;
+            background: rgba(13,15,26,0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            height: 60px; padding: 0 32px;
+            display: flex; align-items: center; gap: 14px;
+            position: sticky; top: 0; z-index: 50;
         }
         .nav-logo {
             display: flex; align-items: center; gap: 10px;
-            font-weight: 900; font-size: 1.05rem;
+            font-weight: 800; font-size: 1.05rem; color: var(--white);
         }
-        .logo-icon {
-            width: 36px; height: 36px; background: var(--orange);
-            border: 2px solid var(--border);
-            display: flex; align-items: center; justify-content: center; font-size: 1rem;
+        .nav-gem {
+            width: 34px; height: 34px; border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent1), #a855f7);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
         }
         .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
         .user-chip {
-            background: #dbe4ff; border: 1.5px solid var(--blue);
-            padding: 5px 12px; font-size: 0.8rem; font-weight: 700; color: var(--blue);
+            padding: 5px 12px; border-radius: 20px;
+            background: var(--accent1-l); border: 1px solid var(--accent1);
+            font-size: 0.8rem; font-weight: 700; color: #a78bfa;
         }
         .btn-sm {
-            padding: 6px 14px; background: var(--white);
-            border: 2px solid var(--border); font-size: 0.8rem;
-            font-family: inherit; font-weight: 700; cursor: pointer;
-            transition: background 0.15s; text-decoration: none; color: var(--black);
-            display: inline-block;
+            padding: 6px 14px; border-radius: 6px;
+            background: transparent; border: 1px solid var(--border);
+            font-size: 0.78rem; font-family: inherit; font-weight: 600;
+            cursor: pointer; text-decoration: none; color: var(--muted);
+            transition: border-color 0.15s, color 0.15s;
         }
-        .btn-sm:hover { background: var(--faint, #f3f4f6); }
+        .btn-sm:hover { border-color: var(--accent1); color: var(--text); }
 
         /* ── Main ─── */
-        main { max-width: 920px; margin: 0 auto; padding: 44px 24px 80px; }
+        main { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
 
-        .page-title { margin-bottom: 36px; }
-        .page-title h1 { font-size: 1.9rem; font-weight: 900; letter-spacing: -0.5px; }
-        .page-title h1 em { font-style: normal; color: var(--orange); }
-        .page-title p { margin-top: 8px; font-size: 0.85rem; color: #6b7280; }
+        .page-title { margin-bottom: 40px; }
+        .page-title h1 { font-size: 1.8rem; font-weight: 900; color: var(--white); letter-spacing: -0.5px; }
+        .page-title h1 em { font-style: normal; color: #a78bfa; }
+        .page-title p { margin-top: 8px; font-size: 0.85rem; color: var(--muted); }
 
-        /* ── Step cards ─── */
-        .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; margin-bottom: 28px; }
-
-        .step {
-            background: var(--white); border: 2.5px solid var(--border);
-            box-shadow: var(--shadow); padding: 26px;
+        /* ── Chapter cards ─── */
+        .chapters {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px; margin-bottom: 32px;
         }
-        .step-badge {
-            display: inline-flex; align-items: center; gap: 7px;
-            padding: 4px 10px; border: 2px solid var(--border);
+        .chapter {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 24px;
+            transition: border-color 0.2s;
+        }
+        .chapter:hover { border-color: var(--accent1); }
+        .chapter.ch2:hover { border-color: var(--accent2); }
+
+        .ch-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 20px;
             font-size: 0.72rem; font-weight: 700; margin-bottom: 16px;
         }
-        .step.user .step-badge { background: #dbe4ff; color: var(--blue); }
-        .step.root .step-badge { background: #ffedd5; color: var(--orange); }
+        .chapter.ch1 .ch-badge { background: var(--accent1-l); color: #a78bfa; border: 1px solid var(--accent1); }
+        .chapter.ch2 .ch-badge { background: var(--accent2-l); color: #fbbf24; border: 1px solid var(--accent2); }
 
-        .step h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 14px; }
-
-        .step ul { list-style: none; padding: 0; }
-        .step ul li {
-            font-size: 0.82rem; color: #374151;
-            padding: 6px 0; border-bottom: 1px dashed #e5e7eb;
-            display: flex; gap: 8px; align-items: flex-start; line-height: 1.5;
+        .chapter h3 { font-size: 1rem; font-weight: 800; color: var(--white); margin-bottom: 12px; }
+        .chapter ul { list-style: none; padding: 0; }
+        .chapter ul li {
+            font-size: 0.82rem; color: #94a3b8;
+            padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; gap: 8px; align-items: flex-start; line-height: 1.55;
         }
-        .step ul li:last-child { border-bottom: none; }
-        .step ul li::before { content: '›'; color: var(--orange); font-weight: 900; flex-shrink: 0; }
-        .step ul li code {
-            background: #f3f4f6; border: 1px solid #e5e7eb;
-            padding: 0 5px; font-size: 0.73rem; color: var(--orange);
-            word-break: break-all;
-        }
+        .chapter ul li:last-child { border-bottom: none; }
+        .chapter ul li::before { content: '›'; color: #a78bfa; font-weight: 900; flex-shrink: 0; }
+        .chapter.ch2 ul li::before { color: #fbbf24; }
 
         /* ── Leaderboard link card ─── */
         .lb-link {
-            background: var(--white); border: 2.5px solid var(--border);
-            box-shadow: var(--shadow); padding: 22px 26px;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px 24px;
             display: flex; align-items: center; justify-content: space-between;
-            text-decoration: none; color: var(--black);
-            transition: transform 0.1s, box-shadow 0.1s;
+            text-decoration: none; color: var(--text);
+            transition: border-color 0.2s;
         }
-        .lb-link:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+        .lb-link:hover { border-color: var(--accent1); }
         .lb-left { display: flex; align-items: center; gap: 16px; }
         .lb-icon {
-            width: 50px; height: 50px; background: #fef3c7;
-            border: 2px solid var(--border);
-            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+            width: 48px; height: 48px; border-radius: 10px;
+            background: var(--accent2-l);
+            display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
         }
-        .lb-link h4 { font-size: 1rem; font-weight: 800; }
-        .lb-link p  { font-size: 0.78rem; color: #6b7280; margin-top: 3px; }
-        .arrow { font-size: 1.6rem; color: var(--orange); font-weight: 900; }
+        .lb-link h4 { font-size: 0.95rem; font-weight: 700; color: var(--white); }
+        .lb-link p  { font-size: 0.78rem; color: var(--muted); margin-top: 3px; }
+        .arrow { font-size: 1.4rem; color: #a78bfa; }
 
-        /* ── Mini leaderboard widget ─── */
+        /* ── Mini leaderboard ─── */
         #mini-lb { margin-top: 28px; }
         .mini-lb-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;
         }
         .mini-board {
-            background: var(--white); border: 2.5px solid var(--border);
-            box-shadow: var(--shadow);
+            background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+            overflow: hidden;
         }
         .mini-board-hd {
-            padding: 10px 16px; border-bottom: 2px solid var(--border);
-            font-size: 0.78rem; font-weight: 800; display: flex; align-items: center; gap: 8px;
+            padding: 10px 16px; font-size: 0.78rem; font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
         }
-        .mini-board.user .mini-board-hd { background: #3b5bdb; color: #fff; }
-        .mini-board.root .mini-board-hd { background: var(--orange); color: #fff; }
-        .mini-board-body { padding: 8px 0; }
+        .mini-board.lv1 .mini-board-hd { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; }
+        .mini-board.lv2 .mini-board-hd { background: linear-gradient(135deg, #b45309, #d97706); color: #fff; }
+        .mini-board-body { padding: 6px 0; }
         .mini-row {
             display: flex; align-items: center; gap: 10px;
             padding: 7px 16px; font-size: 0.82rem;
-            border-bottom: 1px solid #f3f4f6;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
         .mini-row:last-child { border-bottom: none; }
         .mini-medal { font-size: 1rem; width: 22px; flex-shrink: 0; }
-        .mini-name { font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .mini-time { font-size: 0.7rem; color: #9ca3af; font-family: monospace; }
-        .mini-empty { padding: 18px 16px; font-size: 0.78rem; color: #9ca3af; text-align: center; }
+        .mini-name { font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+        .mini-time { font-size: 0.7rem; color: var(--muted); font-family: monospace; }
+        .mini-empty { padding: 18px 16px; font-size: 0.78rem; color: var(--muted); text-align: center; }
         .mini-foot {
-            padding: 6px 16px; background: #f9fafb; border-top: 1px solid #e5e7eb;
-            font-size: 0.68rem; color: #9ca3af; text-align: right;
+            padding: 6px 16px; border-top: 1px solid var(--border);
+            font-size: 0.68rem; color: var(--muted); text-align: right;
         }
     </style>
 </head>
 <body>
     <nav>
         <div class="nav-logo">
-            <div class="logo-icon">⚡</div>
-            <span>Shiro Challenge</span>
+            <div class="nav-gem">🗺️</div>
+            <span>MazeQuest</span>
         </div>
         <div class="nav-right">
-            <span class="user-chip" th:text="${username}">admin</span>
+            <span class="user-chip" th:text="${username}">player</span>
             <a href="/logout" class="btn-sm">退出登录</a>
         </div>
     </nav>
 
     <main>
         <div class="page-title">
-            <h1>挑战 <em>目标</em></h1>
-            <p>完成以下两个阶段，在排行榜上留下你的名字！</p>
+            <h1>玩家 <em>中心</em></h1>
+            <p>完成两个章节的关卡挑战，在英雄榜上留下你的名字！</p>
         </div>
 
-        <div class="steps">
-            <div class="step user">
-                <div class="step-badge">🔓 STAGE 1</div>
-                <h3>用户权限 RCE</h3>
+        <div class="chapters">
+            <div class="chapter ch1">
+                <div class="ch-badge">🗝️ 第一章</div>
+                <h3>迷境入门</h3>
                 <ul>
-                    <li>勾选「记住我」登录，拦截响应 Cookie</li>
-                    <li>使用 Shiro 默认密钥 <code>kPH+bIxk5D2deZiIxcaaaA==</code> 伪造恶意 RememberMe Cookie</li>
-                    <li>携带 Payload 发起请求，触发反序列化 RCE</li>
-                    <li>获取 <code>ctf</code> 用户 Shell</li>
-                    <li>读取 <code>/home/ctf/flag.txt</code></li>
-                    <li>执行 <code>touch /home/ctf/players/YOUR_NAME</code> 上榜</li>
+                    <li>进入地下迷宫，探索隐藏通道</li>
+                    <li>收集钥匙碎片，破解门控机制</li>
+                    <li>找到 Explorer 存档点，解锁探险家身份</li>
+                    <li>在纪念石碑上刻下你的名字上榜</li>
                 </ul>
             </div>
 
-            <div class="step root">
-                <div class="step-badge">👑 STAGE 2</div>
-                <h3>PwnKit 提权</h3>
+            <div class="chapter ch2">
+                <div class="ch-badge">👑 第二章</div>
+                <h3>传奇巅峰</h3>
                 <ul>
-                    <li>在 ctf 用户 Shell 中下载 PwnKit 利用代码</li>
-                    <li>编译并执行 CVE-2021-4034 漏洞利用程序</li>
-                    <li>通过 <code>pkexec</code> SUID 位漏洞获取 root</li>
-                    <li>读取 <code>/root/flag.txt</code></li>
-                    <li>执行 <code>touch /root/players/YOUR_NAME</code> 上榜</li>
+                    <li>穿越混沌之境，挑战终极守卫</li>
+                    <li>破解古老魔法阵，获取传说道具</li>
+                    <li>登顶秘境高塔，摘取传说王冠</li>
+                    <li>在王者碑上刻下你的名字上榜</li>
                 </ul>
             </div>
         </div>
@@ -193,8 +196,8 @@
             <div class="lb-left">
                 <div class="lb-icon">🏆</div>
                 <div>
-                    <h4>查看实时排行榜</h4>
-                    <p>每 30 秒自动刷新</p>
+                    <h4>查看全服英雄榜</h4>
+                    <p>每 30 秒自动刷新 · 实时更新</p>
                 </div>
             </div>
             <div class="arrow">→</div>
@@ -202,15 +205,15 @@
 
         <section id="mini-lb">
             <div class="mini-lb-grid">
-                <div class="mini-board user">
-                    <div class="mini-board-hd">🔓 用户权限 TOP 3</div>
+                <div class="mini-board lv1">
+                    <div class="mini-board-hd">🗝️ 第一章 TOP 3</div>
                     <div class="mini-board-body" id="mini-user-body">
                         <div class="mini-empty">加载中…</div>
                     </div>
                     <div class="mini-foot" id="mini-user-ts"></div>
                 </div>
-                <div class="mini-board root">
-                    <div class="mini-board-hd">👑 ROOT 权限 TOP 3</div>
+                <div class="mini-board lv2">
+                    <div class="mini-board-hd">👑 第二章 TOP 3</div>
                     <div class="mini-board-body" id="mini-root-body">
                         <div class="mini-empty">加载中…</div>
                     </div>
@@ -237,7 +240,7 @@
         var body = document.getElementById(bodyId);
         var ts   = document.getElementById(tsId);
         if (!entries || entries.length === 0) {
-            body.innerHTML = '<div class="mini-empty">暂无解题记录</div>';
+            body.innerHTML = '<div class="mini-empty">暂无通关记录</div>';
         } else {
             var top3 = entries.slice(0, 3);
             body.innerHTML = top3.map(function(e, i) {
@@ -262,9 +265,9 @@
             })
             .catch(function() {
                 document.getElementById('mini-user-body').innerHTML =
-                    '<div class="mini-empty">排行榜暂时不可用</div>';
+                    '<div class="mini-empty">榜单暂时不可用</div>';
                 document.getElementById('mini-root-body').innerHTML =
-                    '<div class="mini-empty">排行榜暂时不可用</div>';
+                    '<div class="mini-empty">榜单暂时不可用</div>';
             });
     }
 
