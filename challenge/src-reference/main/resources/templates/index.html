@@ -126,6 +126,7 @@
             font-size: 0.6rem;
         }
         .lb-link .lb-icon { font-size: 1.6rem; margin-right: 12px; }
+        .lb-left { display: flex; align-items: center; }
         .lb-link h4 { font-size: 0.65rem; margin-bottom: 6px; }
         .lb-link p  { font-size: 0.5rem; color: #555; }
         .lb-arrow { font-size: 1.2rem; color: #209cee; }
@@ -220,13 +221,12 @@
 
         <div class="lb-link-wrap">
             <a class="nes-container lb-link" th:href="${leaderboardUrl}" target="_blank">
-                <div style="display:flex;align-items:center;">
+                <div class="lb-left">
                     <span class="lb-icon">🏆</span>
                     <div>
                         <h4>查看全服英雄榜</h4>
                         <p>每 30 秒自动刷新 · 实时更新</p>
                     </div>
-                </div>
                 <span class="lb-arrow">→</span>
             </a>
         </div>
