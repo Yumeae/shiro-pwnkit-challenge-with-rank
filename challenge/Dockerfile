@@ -29,7 +29,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # snapshot timestamp and (b) we must NOT pull in the patched polkit version.
 # Acquire::Check-Valid-Until=false is required because the snapshot Release files
 # have a ValidUntil timestamp that has long since passed.
-RUN printf 'deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main restricted universe multiverse\n' \
+RUN printf 'deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main restricted universe multiverse\n' \
     > /etc/apt/sources.list && \
     printf 'Acquire::Check-Valid-Until "false";\nAcquire::https::Verify-Peer "false";\nAcquire::https::Verify-Host "false";\n' \
     > /etc/apt/apt.conf.d/99snapshot
