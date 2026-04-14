@@ -37,8 +37,14 @@ RUN printf 'deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main r
 # Install only the runtime packages needed.
 # polkit is intentionally kept at the Ubuntu 20.04 default version which is
 # vulnerable to CVE-2021-4034 (PwnKit). Do NOT run apt-get upgrade.
+#
+# libpam-systemd is listed explicitly because policykit-1 depends on it and
+# APT will not resolve it automatically under --no-install-recommends inside a
+# minimal Docker container (results in "not going to be installed" otherwise).
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
     openjdk-8-jre \
+    libpam-systemd \
     policykit-1 \
     sudo \
     bash \
