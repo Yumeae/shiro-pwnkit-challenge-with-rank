@@ -4,149 +4,140 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>登录 — MazeQuest 迷境探索</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
     <style>
-        :root {
-            --bg:      #0d0f1a;
-            --card:    #151829;
-            --border:  #2a2f4a;
-            --accent:  #7c3aed;
-            --accent-l: rgba(124,58,237,0.15);
-            --text:    #e2e8f0;
-            --muted:   #64748b;
-            --white:   #ffffff;
-            --err-bg:  rgba(239,68,68,0.1);
-            --err-brd: rgba(239,68,68,0.4);
-        }
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        * { box-sizing: border-box; }
+
         body {
-            background: var(--bg);
-            background-image:
-                radial-gradient(ellipse 60% 40% at 30% 20%, rgba(124,58,237,0.12) 0%, transparent 70%),
-                radial-gradient(ellipse 50% 40% at 75% 75%, rgba(99,102,241,0.08) 0%, transparent 70%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans SC',
-                         'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #212529;
+            font-family: 'Press Start 2P', monospace;
+            color: #fff;
             min-height: 100vh;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 24px;
-            color: var(--text);
         }
 
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.4);
-            padding: 44px 40px;
-            width: 100%; max-width: 420px;
+        .login-wrap {
+            width: 100%;
+            max-width: 460px;
         }
 
         .logo-row {
-            display: flex; align-items: center; gap: 12px;
-            margin-bottom: 32px;
+            text-align: center;
+            margin-bottom: 28px;
         }
-        .logo-gem {
-            width: 46px; height: 46px; border-radius: 12px;
-            background: linear-gradient(135deg, var(--accent), #a855f7);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.35rem; flex-shrink: 0;
+        .logo-row .logo-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 10px;
         }
-        .logo-text { font-weight: 800; font-size: 1.1rem; color: var(--white); }
-        .logo-sub  { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-
-        h1 { font-size: 1.5rem; font-weight: 800; color: var(--white); margin-bottom: 4px; }
-        .sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 28px; }
-
-        .error-box {
-            background: var(--err-bg); border: 1px solid var(--err-brd);
-            border-radius: 8px;
-            padding: 10px 14px; font-size: 0.82rem; color: #f87171;
-            margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+        .logo-row .logo-title {
+            font-size: 0.7rem;
+            color: #ffa500;
+        }
+        .logo-row .logo-sub {
+            font-size: 0.4rem;
+            color: #aaa;
+            margin-top: 6px;
         }
 
-        label { display: block; font-weight: 600; font-size: 0.82rem; margin-bottom: 6px; color: #94a3b8; }
+        h1 {
+            font-size: 0.7rem;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .sub {
+            font-size: 0.38rem;
+            color: #aaa;
+            margin-bottom: 24px;
+            text-align: center;
+            line-height: 1.8;
+        }
 
-        input[type="text"],
-        input[type="password"] {
-            width: 100%; padding: 11px 14px;
-            border: 1px solid var(--border); background: rgba(255,255,255,0.04);
-            border-radius: 8px;
-            font-size: 0.9rem; font-family: inherit; outline: none;
+        .field-group {
             margin-bottom: 18px;
-            color: var(--text);
-            transition: border-color 0.15s, box-shadow 0.15s;
         }
-        input[type="text"]::placeholder,
-        input[type="password"]::placeholder { color: var(--muted); }
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
+        .field-group label {
+            display: block;
+            font-size: 0.42rem;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+        .field-group .nes-input {
+            width: 100%;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.5rem;
         }
 
         .remember-row {
-            display: flex; align-items: center; gap: 8px;
-            margin-bottom: 24px; font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            font-size: 0.38rem;
         }
-        input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
-        .remember-row label { margin-bottom: 0; font-weight: 400; color: var(--muted); }
-
-        .btn {
-            width: 100%; padding: 12px;
-            background: linear-gradient(135deg, var(--accent), #a855f7);
-            border: none; border-radius: 8px;
-            box-shadow: 0 4px 16px rgba(124,58,237,0.35);
-            color: #fff; font-size: 0.95rem; font-weight: 700;
-            font-family: inherit; cursor: pointer;
-            transition: opacity 0.15s, box-shadow 0.15s;
+        .remember-row label {
+            color: #aaa;
+            cursor: pointer;
+            line-height: 1.8;
         }
-        .btn:hover { opacity: 0.9; box-shadow: 0 6px 20px rgba(124,58,237,0.45); }
 
-        .divider { margin: 24px 0; border: none; border-top: 1px solid var(--border); }
-
-        .footer-note {
-            text-align: center; font-size: 0.73rem; color: var(--muted); line-height: 1.8;
+        .submit-btn {
+            width: 100%;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.5rem;
         }
-        .footer-note a { color: #a78bfa; text-decoration: none; }
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="login-wrap">
         <div class="logo-row">
-            <div class="logo-gem">🗺️</div>
-            <div>
-                <div class="logo-text">MazeQuest</div>
-                <div class="logo-sub">迷境探索 · 在线冒险游戏</div>
-            </div>
+            <span class="logo-icon">🗺️</span>
+            <div class="logo-title">MazeQuest</div>
+            <div class="logo-sub">迷境探索 · 在线冒险游戏</div>
         </div>
 
-        <h1>玩家登录</h1>
-        <div class="sub">登录后开始你的迷境冒险之旅</div>
+        <div class="nes-container with-title">
+            <p class="title">玩家登录</p>
 
-        <div th:if="${error}" class="error-box">
-            <span>⚠</span>
-            <span th:text="${error}"></span>
-        </div>
+            <h1>欢迎回来！</h1>
+            <p class="sub">登录后开始你的迷境冒险之旅</p>
 
-        <form method="post" action="/login">
-            <label for="username">游戏账号</label>
-            <input type="text" id="username" name="username" placeholder="请输入账号"
-                   autocomplete="username" autofocus />
-
-            <label for="password">密码</label>
-            <input type="password" id="password" name="password" placeholder="请输入密码"
-                   autocomplete="current-password" />
-
-            <div class="remember-row">
-                <input type="checkbox" id="rememberMe" name="rememberMe" value="true" />
-                <label for="rememberMe">记住登录状态（14 天内免密进入）</label>
+            <div th:if="${error}" class="nes-container is-rounded" style="margin-bottom:18px;border-color:#e76e55;">
+                <p style="font-size:0.4rem;color:#e76e55;">⚠ <span th:text="${error}"></span></p>
             </div>
 
-            <button type="submit" class="btn">▶ 开始冒险</button>
-        </form>
+            <form method="post" action="/login">
+                <div class="field-group">
+                    <label for="username">游戏账号</label>
+                    <input type="text" id="username" name="username"
+                           class="nes-input" placeholder="请输入账号"
+                           autocomplete="username" autofocus />
+                </div>
 
-        <hr class="divider" />
-        <div class="footer-note">
-            还没有账号？<a href="#">立即注册</a> &nbsp;·&nbsp; <a href="#">忘记密码</a>
+                <div class="field-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password"
+                           class="nes-input" placeholder="请输入密码"
+                           autocomplete="current-password" />
+                </div>
+
+                <div class="remember-row">
+                    <label>
+                        <input type="checkbox" id="rememberMe" name="rememberMe"
+                               value="true" class="nes-checkbox" />
+                        <span></span>
+                    </label>
+                    <label for="rememberMe">记住登录状态（14 天内免密进入）</label>
+                </div>
+
+                <button type="submit" class="nes-btn is-primary submit-btn">▶ 开始冒险</button>
+            </form>
         </div>
     </div>
 </body>
