@@ -39,7 +39,7 @@ RUN printf 'deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main r
 # vulnerable to CVE-2021-4034 (PwnKit). Do NOT run apt-get upgrade.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openjdk-8-jre \
-    polkit \
+    policykit-1 \
     sudo \
     bash \
     && rm -rf /var/lib/apt/lists/*
