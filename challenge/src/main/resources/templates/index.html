@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shiro Challenge - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        header h1 {
+            font-size: 2rem;
+            letter-spacing: 4px;
+        }
+        header p {
+            color: #555;
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+        .user-info {
+            text-align: right;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        .user-info a {
+            color: #ff4444;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        .challenge-info {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            background: #111;
+            border: 1px solid #333;
+            padding: 24px;
+        }
+        .challenge-info h2 {
+            color: #ffcc00;
+            margin-bottom: 14px;
+        }
+        .challenge-info ul {
+            list-style: none;
+            padding: 0;
+        }
+        .challenge-info ul li {
+            padding: 6px 0;
+            border-bottom: 1px solid #1a1a1a;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .challenge-info ul li:before {
+            content: '> ';
+            color: #00ff41;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="user-info">
+        Logged in as: <span th:text="${username}" style="color:#00ff41"></span>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <header>
+        <h1>[ SHIRO CHALLENGE ]</h1>
+        <p>CVE-2016-4437 (Shiro RememberMe RCE) + CVE-2021-4034 (PwnKit)</p>
+    </header>
+
+    <div class="challenge-info">
+        <h2>// Challenge Objectives</h2>
+        <ul>
+            <li>Step 1: Exploit the Apache Shiro RememberMe deserialization vulnerability to get a shell as <strong>ctf</strong> user</li>
+            <li>Step 2: Read the flag at <strong>/home/ctf/flag.txt</strong> and follow the instructions to appear on the User Leaderboard</li>
+            <li>Step 3: Exploit PwnKit (CVE-2021-4034) to escalate privileges to <strong>root</strong></li>
+            <li>Step 4: Read the flag at <strong>/root/flag.txt</strong> and follow the instructions to appear on the Root Leaderboard</li>
+            <li>View the leaderboard at <strong>http://&lt;host&gt;:80</strong></li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        This application is intentionally vulnerable. For CTF use only.
+    </div>
+</body>
+</html>

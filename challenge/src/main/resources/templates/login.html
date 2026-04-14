@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Shiro Challenge</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .login-box {
+            background: #111;
+            border: 1px solid #00ff41;
+            padding: 40px;
+            width: 380px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 1.4rem;
+            color: #00ff41;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #555;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #00ff41;
+            font-family: inherit;
+            font-size: 0.9rem;
+            margin-bottom: 18px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #00ff41;
+        }
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 22px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: background 0.2s, color 0.2s;
+        }
+        button:hover {
+            background: #00ff41;
+            color: #0a0a0a;
+        }
+        .error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 10px;
+            margin-bottom: 18px;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>[ SHIRO CHALLENGE ]</h1>
+        <div class="subtitle">CVE-2016-4437 &amp; CVE-2021-4034</div>
+
+        <div th:if="${error}" class="error">
+            <span th:text="${error}"></span>
+        </div>
+
+        <form method="post" action="/login">
+            <label>Username</label>
+            <input type="text" name="username" autocomplete="off" autofocus />
+
+            <label>Password</label>
+            <input type="password" name="password" />
+
+            <div class="remember">
+                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" />
+                <label for="rememberMe" style="margin-bottom:0">Remember Me</label>
+            </div>
+
+            <button type="submit">LOGIN</button>
+        </form>
+    </div>
+</body>
+</html>
