@@ -1,0 +1,29 @@
+services:
+  challenge:
+    build: ./challenge
+    container_name: shiro-challenge
+    ports:
+      - "8080:8080"
+    volumes:
+      - user_players:/home/ctf/players
+      - root_players:/root/players
+    restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN
+    privileged: true
+
+  leaderboard:
+    build: ./leaderboard
+    container_name: leaderboard
+    ports:
+      - "80:5000"
+    volumes:
+      - user_players:/data/normal:ro
+      - root_players:/data/root:ro
+    restart: unless-stopped
+    depends_on:
+      - challenge
+
+volumes:
+  user_players:
+  root_players:

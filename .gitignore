@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Java / Maven build artefacts
+challenge/target/
+*.class
+
+# The pre-built app.jar is intentionally committed and tracked.
+# All other JARs/WARs (build outputs) are excluded.
+challenge/target/*.jar
+challenge/target/*.war
+
+# Prevent the Maven manifest from being re-added accidentally.
+# The project intentionally ships a pre-built JAR (challenge/app.jar) so
+# that no pom.xml with vulnerable coordinates appears in the repository.
+# Source reference files live in challenge/src-reference/ for reading only.
+challenge/pom.xml
+challenge/src/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
