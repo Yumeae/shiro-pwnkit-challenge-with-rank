@@ -349,7 +349,7 @@
 
     function renderPodium(podiumId, entries) {
         const el = document.getElementById(podiumId);
-        if (!entries || entries.length < 2) {
+        if (!entries || entries.length === 0) {
             el.style.display = 'none';
             return;
         }
