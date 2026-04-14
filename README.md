@@ -10,6 +10,22 @@ that auto-updates when contestants create their name-files in the target directo
 
 ---
 
+## ⚠ Security Warning — Intentionally Vulnerable Dependencies
+
+> **This application deliberately uses vulnerable library versions as the CTF
+> challenge targets. Do NOT deploy outside an isolated Docker environment.**
+
+| Dependency | Version | CVE | Why kept |
+|---|---|---|---|
+| `org.apache.shiro:shiro-spring` | **1.2.4** | CVE-2016-4437 | Hardcoded AES rememberMe key — **this IS Stage 1 of the challenge** |
+| `commons-collections:commons-collections` | **3.2.1** | CVE-2015-6420 | InvokerTransformer gadget chain — **required for the Shiro RCE payload** |
+| Ubuntu `pkexec` (polkit) | **Ubuntu 20.04 default** | CVE-2021-4034 | PwnKit SUID exploit — **this IS Stage 2 of the challenge** |
+
+Upgrading any of the above would break the challenge objectives.
+See [`SECURITY_NOTICE.md`](./SECURITY_NOTICE.md) for the full isolation checklist.
+
+---
+
 ## Architecture
 
 ```

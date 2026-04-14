@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OWASP Dependency-Check suppression file for the CTF challenge application.
+
+  The vulnerabilities listed here are INTENTIONAL — they are the attack surface
+  that participants are expected to exploit. See SECURITY_NOTICE.md for the
+  full rationale.
+
+  DO NOT apply these suppressions to any production application.
+-->
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+    <!--
+      commons-collections 3.2.1
+      CVE-2015-6420 / CVE-2015-7501 — Deserialization gadget chain.
+      INTENTIONAL: required for the Shiro rememberMe RCE exploit gadget chain.
+    -->
+    <suppress>
+        <notes>
+            Intentionally vulnerable CTF dependency.
+            commons-collections 3.2.1 provides the InvokerTransformer gadget
+            chain needed for CVE-2016-4437 (Shiro rememberMe RCE).
+          See SECURITY_NOTICE.md.
+        </notes>
+        <gav regex="true">^commons-collections:commons-collections:3\.2\.1$</gav>
+        <cve>CVE-2015-6420</cve>
+    </suppress>
+    <suppress>
+        <notes>Intentionally vulnerable CTF dependency. See SECURITY_NOTICE.md.</notes>
+        <gav regex="true">^commons-collections:commons-collections:3\.2\.1$</gav>
+        <cve>CVE-2015-7501</cve>
+    </suppress>
+
+    <!--
+      shiro-spring 1.2.4
+      CVE-2016-4437 — Hardcoded rememberMe AES key enabling RCE.
+      INTENTIONAL: this IS the CTF Stage 1 challenge target.
+    -->
+    <suppress>
+        <notes>
+            Intentionally vulnerable CTF dependency.
+            shiro-spring 1.2.4 has a hardcoded rememberMe key (CVE-2016-4437)
+            which is the Stage 1 challenge objective.
+            See SECURITY_NOTICE.md.
+        </notes>
+        <gav regex="true">^org\.apache\.shiro:shiro-.*:1\.2\.4$</gav>
+        <cve>CVE-2016-4437</cve>
+    </suppress>
+    <!-- Auth-bypass CVEs in Shiro — also intentional (same vulnerable target) -->
+    <suppress>
+        <notes>Intentionally vulnerable CTF dependency. See SECURITY_NOTICE.md.</notes>
+        <gav regex="true">^org\.apache\.shiro:shiro-.*:1\.2\.4$</gav>
+        <cve>CVE-2020-17523</cve>
+    </suppress>
+    <suppress>
+        <notes>Intentionally vulnerable CTF dependency. See SECURITY_NOTICE.md.</notes>
+        <gav regex="true">^org\.apache\.shiro:shiro-.*:1\.2\.4$</gav>
+        <cve>CVE-2020-13933</cve>
+    </suppress>
+
+</suppressions>

@@ -36,18 +36,45 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- Apache Shiro 1.2.4 - vulnerable to CVE-2016-4437 (hardcoded rememberMe key) -->
+        <!--
+          ╔══════════════════════════════════════════════════════════════╗
+          ║         ⚠  INTENTIONALLY VULNERABLE CTF DEPENDENCIES  ⚠     ║
+          ║                                                              ║
+          ║  The two dependencies below are pinned to their VULNERABLE   ║
+          ║  versions ON PURPOSE.  This entire application IS the CTF    ║
+          ║  challenge target — upgrading them would break the exercise. ║
+          ║                                                              ║
+          ║  DO NOT run this application outside an isolated container.  ║
+          ║  See SECURITY_NOTICE.md for the full isolation guidance.     ║
+          ╚══════════════════════════════════════════════════════════════╝
+        -->
+
+        <!--
+          INTENTIONALLY VULNERABLE: Apache Shiro 1.2.4
+          CVE-2016-4437 — hardcoded AES key (kPH+bIxk5D2deZiIxcaaaA==) in
+          AbstractRememberMeManager allows any attacker who can set the
+          rememberMe cookie to trigger Java deserialization and achieve RCE.
+          Patched in 1.2.5+ (random key) and 1.7.1 (auth-bypass fixes).
+          KEEP AT 1.2.4 — upgrading destroys the challenge target.
+        -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
-            <version>1.2.4</version>
+            <version>1.2.4</version>  <!-- CTF target: CVE-2016-4437 -->
         </dependency>
 
-        <!-- Commons Collections 3.2.1 - required for deserialization gadget chain -->
+        <!--
+          INTENTIONALLY VULNERABLE: Commons Collections 3.2.1
+          CVE-2015-6420 / CVE-2015-7501 — InvokerTransformer gadget chain
+          enables arbitrary code execution via Java deserialization when
+          combined with the Shiro rememberMe vulnerability above.
+          Patched in 3.2.2 (serialization filter) and 4.1.
+          KEEP AT 3.2.1 — this is the gadget chain required for the exploit.
+        -->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
+            <version>3.2.1</version>  <!-- CTF gadget chain: CVE-2015-6420 -->
         </dependency>
     </dependencies>
 
