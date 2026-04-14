@@ -1,120 +1,130 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Shiro Challenge</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登录 — Shiro Challenge</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg:     #f5f0e8;
+            --white:  #ffffff;
+            --black:  #111827;
+            --orange: #e07b39;
+            --border: #111827;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #0a0a0a;
-            color: #00ff41;
-            font-family: 'Courier New', monospace;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle, rgba(0,0,0,0.13) 1px, transparent 1px);
+            background-size: 22px 22px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans SC',
+                         'PingFang SC', 'Microsoft YaHei', sans-serif;
             min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px;
         }
-        .login-box {
-            background: #111;
-            border: 1px solid #00ff41;
+
+        .card {
+            background: var(--white);
+            border: 2.5px solid var(--border);
+            box-shadow: 6px 6px 0 var(--border);
             padding: 40px;
-            width: 380px;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+            width: 100%; max-width: 420px;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 8px;
-            font-size: 1.4rem;
-            color: #00ff41;
+
+        .logo-row {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 28px;
         }
-        .subtitle {
-            text-align: center;
-            font-size: 0.75rem;
-            color: #555;
-            margin-bottom: 30px;
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: var(--orange); border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
         }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            color: #aaa;
+        .logo-text { font-weight: 900; font-size: 1.1rem; }
+
+        h1 { font-size: 1.55rem; font-weight: 900; margin-bottom: 6px; }
+        .sub { font-size: 0.8rem; color: #6b7280; margin-bottom: 28px; font-family: monospace; }
+
+        .error-box {
+            background: #fef2f2; border: 2px solid #ef4444;
+            padding: 10px 14px; font-size: 0.82rem; color: #dc2626;
+            margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
         }
+
+        label { display: block; font-weight: 700; font-size: 0.82rem; margin-bottom: 6px; }
+
         input[type="text"],
         input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: #00ff41;
-            font-family: inherit;
-            font-size: 0.9rem;
-            margin-bottom: 18px;
-            outline: none;
-            transition: border-color 0.2s;
+            width: 100%; padding: 10px 14px;
+            border: 2px solid var(--border); background: var(--white);
+            font-size: 0.9rem; font-family: inherit; outline: none;
+            margin-bottom: 18px; transition: box-shadow 0.15s;
         }
         input[type="text"]:focus,
-        input[type="password"]:focus {
-            border-color: #00ff41;
+        input[type="password"]:focus { box-shadow: 3px 3px 0 var(--orange); }
+
+        .remember-row {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 24px; font-size: 0.82rem;
         }
-        .remember {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 22px;
-            font-size: 0.85rem;
-            color: #aaa;
+        input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--orange); cursor: pointer; }
+        .remember-row label { margin-bottom: 0; font-weight: 400; }
+
+        .btn {
+            width: 100%; padding: 12px;
+            background: var(--orange); border: 2px solid var(--border);
+            box-shadow: 3px 3px 0 var(--border);
+            color: #fff; font-size: 0.95rem; font-weight: 700;
+            font-family: inherit; cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
         }
-        button {
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            border: 1px solid #00ff41;
-            color: #00ff41;
-            font-family: inherit;
-            font-size: 1rem;
-            cursor: pointer;
-            letter-spacing: 2px;
-            transition: background 0.2s, color 0.2s;
+        .btn:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+        .btn:active { transform: translate(3px, 3px); box-shadow: none; }
+
+        .hint {
+            margin-top: 20px; padding: 12px 14px;
+            background: #fffbeb; border: 1.5px solid #fcd34d;
+            font-size: 0.75rem; color: #92400e; line-height: 1.8;
         }
-        button:hover {
-            background: #00ff41;
-            color: #0a0a0a;
-        }
-        .error {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid #ff4444;
-            color: #ff4444;
-            padding: 10px;
-            margin-bottom: 18px;
-            font-size: 0.85rem;
-            text-align: center;
-        }
+        .hint strong { font-weight: 700; }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <h1>[ SHIRO CHALLENGE ]</h1>
-        <div class="subtitle">CVE-2016-4437 &amp; CVE-2021-4034</div>
+    <div class="card">
+        <div class="logo-row">
+            <div class="logo-icon">⚡</div>
+            <span class="logo-text">Shiro Challenge</span>
+        </div>
 
-        <div th:if="${error}" class="error">
+        <h1>靶场登录</h1>
+        <div class="sub">CVE-2016-4437 · CVE-2021-4034</div>
+
+        <div th:if="${error}" class="error-box">
+            <span>⚠</span>
             <span th:text="${error}"></span>
         </div>
 
         <form method="post" action="/login">
-            <label>Username</label>
-            <input type="text" name="username" autocomplete="off" autofocus />
+            <label for="username">用户名</label>
+            <input type="text" id="username" name="username" autocomplete="off" autofocus />
 
-            <label>Password</label>
-            <input type="password" name="password" />
+            <label for="password">密码</label>
+            <input type="password" id="password" name="password" />
 
-            <div class="remember">
-                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" />
-                <label for="rememberMe" style="margin-bottom:0">Remember Me</label>
+            <div class="remember-row">
+                <input type="checkbox" id="rememberMe" name="rememberMe" value="true" />
+                <label for="rememberMe">记住我 (Remember Me)</label>
             </div>
 
-            <button type="submit">LOGIN</button>
+            <button type="submit" class="btn">登 录 →</button>
         </form>
+
+        <div class="hint">
+            💡 <strong>提示：</strong>启用「记住我」后，服务器会在响应中设置 RememberMe Cookie，
+            可利用 Shiro 默认密钥伪造恶意序列化 Payload 实现 RCE。
+        </div>
     </div>
 </body>
 </html>

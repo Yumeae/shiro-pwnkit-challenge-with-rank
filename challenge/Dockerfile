@@ -1,30 +1,36 @@
+# ── Stage 1: Build the Shiro vulnerable web application ───────────────────────
+# Apache Shiro is a Java security framework; CVE-2016-4437 is a Java
+# deserialization vulnerability, so Java/Maven are required here.
+FROM maven:3.8.8-eclipse-temurin-8 AS builder
+
+WORKDIR /build
+COPY pom.xml .
+# Pre-download dependencies as a separate cached layer
+RUN mvn dependency:go-offline -B
+
+COPY src/ src/
+RUN mvn package -DskipTests -B
+
+# ── Stage 2: Ubuntu 20.04 runtime (keeps the PwnKit-vulnerable environment) ───
 FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install Java 8, Maven and polkit (vulnerable version is present in Ubuntu 20.04 base)
+# Install only what is needed at runtime.
+# polkit is intentionally kept at the Ubuntu 20.04 default (vulnerable to
+# CVE-2021-4034 / PwnKit). Do NOT run apt-get upgrade.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    openjdk-8-jdk \
-    maven \
+    openjdk-8-jre \
     polkit \
     sudo \
-    curl \
     bash \
     && rm -rf /var/lib/apt/lists/*
 
 # Ensure pkexec retains its SUID bit (required for CVE-2021-4034)
 RUN chmod u+s /usr/bin/pkexec
 
-# ── Build the Shiro challenge application ──────────────────────────────────────
-WORKDIR /build
-COPY pom.xml .
-# Pre-download Maven dependencies (caches this layer separately from source)
-RUN mvn dependency:go-offline -B
-
-COPY src/ src/
-RUN mvn package -DskipTests -B && \
-    cp target/shiro-challenge-1.0.0.jar /app.jar && \
-    cd / && rm -rf /build
+# Copy the pre-built jar from the builder stage
+COPY --from=builder /build/target/shiro-challenge-1.0.0.jar /app.jar
 
 # ── Create CTF user ────────────────────────────────────────────────────────────
 RUN useradd -m -s /bin/bash ctf && \

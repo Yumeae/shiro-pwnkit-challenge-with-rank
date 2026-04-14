@@ -1,322 +1,362 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shiro + PwnKit Challenge — Ranking</title>
+    <title>Shiro + PwnKit 挑战赛 — 排行榜</title>
     <style>
-        /* ── Reset & base ──────────────────────────────────────────── */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
-            --bg:      #0a0a0a;
-            --panel:   #0f0f0f;
-            --border:  #1e1e1e;
-            --green:   #00ff41;
-            --yellow:  #ffd700;
-            --red:     #ff4444;
-            --blue:    #4fc3f7;
-            --dim:     #555;
-            --text:    #cccccc;
+            --bg:          #f5f0e8;
+            --white:       #ffffff;
+            --black:       #111827;
+            --orange:      #e07b39;
+            --blue:        #3b5bdb;
+            --blue-light:  #dbe4ff;
+            --green:       #16a34a;
+            --border:      #111827;
+            --shadow:      4px 4px 0 #111827;
+            --muted:       #6b7280;
+            --faint:       #f3f4f6;
         }
-
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle, rgba(0,0,0,0.13) 1px, transparent 1px);
+            background-size: 22px 22px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans SC',
+                         'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: var(--black);
             min-height: 100vh;
-            padding: 30px 20px 60px;
         }
 
-        /* ── Scanline overlay ──────────────────────────────────────── */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: repeating-linear-gradient(
-                to bottom,
-                transparent,
-                transparent 2px,
-                rgba(0,0,0,.15) 2px,
-                rgba(0,0,0,.15) 4px
-            );
-            pointer-events: none;
-            z-index: 999;
+        /* ── Navbar ─── */
+        nav {
+            position: sticky; top: 0; z-index: 50;
+            background: var(--white);
+            border-bottom: 2.5px solid var(--border);
+            box-shadow: 0 3px 0 var(--border);
+            height: 62px; padding: 0 32px;
+            display: flex; align-items: center; gap: 16px;
         }
+        .nav-logo {
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 900; font-size: 1.05rem; letter-spacing: -0.3px;
+            text-decoration: none; color: var(--black);
+        }
+        .nav-logo-icon {
+            width: 36px; height: 36px;
+            background: var(--orange); border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+        .nav-chip {
+            padding: 5px 12px; font-size: 0.75rem; font-weight: 700;
+            border: 2px solid var(--border);
+        }
+        .nav-chip.orange  { background: var(--orange); color: #fff; }
+        .nav-chip.outline { background: transparent; color: var(--black); }
+        .nav-live {
+            margin-left: auto; display: flex; align-items: center; gap: 8px;
+            font-size: 0.78rem; font-weight: 600; color: var(--muted);
+        }
+        .live-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--green); flex-shrink: 0;
+            animation: live-pulse 2s ease-in-out infinite;
+        }
+        @keyframes live-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.4; transform: scale(0.7); }
+        }
+        #nav-time { color: var(--black); font-weight: 700; }
 
-        /* ── Header ────────────────────────────────────────────────── */
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        header .ascii {
-            color: var(--green);
-            font-size: clamp(0.55rem, 1.5vw, 0.85rem);
-            line-height: 1.3;
-            white-space: pre;
-            display: inline-block;
-        }
-        header h1 {
-            font-size: clamp(1.2rem, 3vw, 1.8rem);
-            letter-spacing: 6px;
-            color: var(--green);
-            margin-top: 12px;
-            text-shadow: 0 0 12px rgba(0,255,65,.5);
-        }
-        header .subtitle {
-            font-size: 0.75rem;
-            color: var(--dim);
-            margin-top: 6px;
-            letter-spacing: 2px;
-        }
+        /* ── Layout ─── */
+        main { max-width: 1160px; margin: 0 auto; padding: 44px 24px 80px; }
 
-        /* ── Status bar ────────────────────────────────────────────── */
-        .status-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            font-size: 0.75rem;
-            color: var(--dim);
-            margin-bottom: 36px;
+        /* ── Hero ─── */
+        .hero { margin-bottom: 36px; }
+        .hero-label {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 10px; border: 2px solid var(--border);
+            font-size: 0.72rem; font-weight: 700;
+            background: var(--faint); margin-bottom: 12px;
         }
-        .status-bar .dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--green);
-            display: inline-block;
-            animation: blink 1.2s infinite;
+        .hero h1 {
+            font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 900;
+            letter-spacing: -0.8px; line-height: 1.15;
         }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0.2; }
-        }
-        #last-update { color: var(--green); }
+        .hero h1 em { font-style: normal; color: var(--orange); }
+        .hero p { margin-top: 10px; font-size: 0.85rem; color: var(--muted); font-family: monospace; }
 
-        /* ── Boards grid ────────────────────────────────────────────── */
-        .boards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            max-width: 1100px;
-            margin: 0 auto;
+        /* ── Stats ─── */
+        .stats { display: flex; gap: 16px; margin-bottom: 36px; flex-wrap: wrap; }
+        .stat {
+            flex: 1; min-width: 150px;
+            background: var(--white); border: 2.5px solid var(--border);
+            box-shadow: var(--shadow); padding: 18px 22px;
         }
+        .stat-label {
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px;
+        }
+        .stat-value { font-size: 2rem; font-weight: 900; line-height: 1; }
+        .stat-value.c-blue   { color: var(--blue); }
+        .stat-value.c-orange { color: var(--orange); }
+        .stat-value.c-black  { color: var(--black); }
 
-        /* ── Board card ─────────────────────────────────────────────── */
+        /* ── Boards grid ─── */
+        .boards { display: grid; grid-template-columns: repeat(auto-fit, minmax(430px, 1fr)); gap: 28px; }
+
+        /* ── Board card ─── */
         .board {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            padding: 0;
-            overflow: hidden;
-            box-shadow: 0 0 24px rgba(0,0,0,.6);
-            position: relative;
+            background: var(--white); border: 2.5px solid var(--border);
+            box-shadow: var(--shadow); display: flex; flex-direction: column;
         }
-        .board::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-        }
-        .board.user::after  { background: var(--blue); }
-        .board.root::after  { background: var(--red); }
-
         .board-header {
-            padding: 18px 22px 14px;
-            border-bottom: 1px solid var(--border);
+            padding: 16px 20px; border-bottom: 2.5px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
         }
-        .board-header .label {
-            font-size: 0.65rem;
-            letter-spacing: 3px;
-            margin-bottom: 4px;
+        .board.user .board-header { background: var(--blue); }
+        .board.root .board-header { background: var(--orange); }
+        .bh-left { display: flex; align-items: center; gap: 12px; }
+        .bh-icon {
+            width: 38px; height: 38px;
+            background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.45);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
         }
-        .board.user .board-header .label { color: var(--blue); }
-        .board.root .board-header .label { color: var(--red); }
+        .bh-title { color: #fff; }
+        .bh-title h2 { font-size: 0.95rem; font-weight: 800; }
+        .bh-title sub { font-size: 0.68rem; opacity: 0.85; display: block; margin-top: 2px; }
+        .bh-badge {
+            background: rgba(0,0,0,0.18); border: 1.5px solid rgba(255,255,255,0.35);
+            padding: 5px 11px; font-size: 0.75rem; font-weight: 700;
+            color: #fff; white-space: nowrap; flex-shrink: 0;
+        }
+        .board-cve {
+            padding: 9px 20px; background: #fafafa; border-bottom: 1.5px solid #e5e7eb;
+            font-size: 0.7rem; color: var(--muted); font-family: monospace;
+        }
 
-        .board-header h2 {
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-        }
-        .board.user h2 { color: var(--blue); }
-        .board.root h2 { color: var(--red); }
-
-        .board-header .desc {
-            font-size: 0.72rem;
-            color: var(--dim);
-            margin-top: 4px;
-        }
-
-        /* ── Table ──────────────────────────────────────────────────── */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        /* ── Table ─── */
+        table { width: 100%; border-collapse: collapse; }
         thead th {
-            padding: 10px 22px;
-            font-size: 0.68rem;
-            letter-spacing: 2px;
-            color: var(--dim);
-            text-transform: uppercase;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            background: #0d0d0d;
+            padding: 10px 20px; background: #f9fafb; border-bottom: 1.5px solid #e5e7eb;
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.6px; color: #9ca3af; text-align: left;
         }
         thead th:last-child { text-align: right; }
-
-        tbody tr {
-            border-bottom: 1px solid #161616;
-            transition: background 0.15s;
+        tbody tr { border-bottom: 1px solid #f3f4f6; transition: background 0.1s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #f9fafb !important; }
+        tbody tr.r1 { background: #fffbeb; }
+        tbody tr.r2 { background: #f0f4ff; }
+        tbody tr.r3 { background: #fff7ed; }
+        td { padding: 13px 20px; font-size: 0.9rem; }
+        td:last-child { text-align: right; }
+        .td-rank { width: 52px; }
+        .medal  { font-size: 1.15rem; }
+        .rank-n { font-weight: 700; color: #d1d5db; font-size: 0.88rem; }
+        .td-user { display: flex; align-items: center; gap: 10px; }
+        .avatar {
+            width: 30px; height: 30px; border: 1.5px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 800; flex-shrink: 0;
         }
-        tbody tr:hover { background: #141414; }
+        .board.user .avatar { background: var(--blue-light); color: var(--blue); }
+        .board.root .avatar { background: #fff0e6; color: var(--orange); }
+        .uname { font-weight: 600; }
+        .td-time { font-family: monospace; font-size: 0.78rem; color: #9ca3af; }
 
-        tbody td {
-            padding: 11px 22px;
-            font-size: 0.88rem;
+        /* ── Empty state ─── */
+        .empty { padding: 48px 20px; text-align: center; }
+        .empty-emoji { font-size: 2.8rem; margin-bottom: 10px; }
+        .empty h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+        .empty p  { font-size: 0.78rem; color: var(--muted); line-height: 1.9; }
+        .empty code {
+            background: var(--faint); border: 1px solid #e5e7eb;
+            padding: 1px 6px; font-size: 0.75rem; color: var(--orange);
         }
-        tbody td:last-child { text-align: right; color: var(--dim); font-size: 0.75rem; }
 
-        /* Rank medals */
-        .rank {
-            font-weight: bold;
-            width: 40px;
+        /* ── Board footer ─── */
+        .board-foot {
+            margin-top: auto; padding: 10px 20px; background: #f9fafb;
+            border-top: 1.5px solid #e5e7eb;
+            display: flex; justify-content: space-between;
+            font-size: 0.7rem; color: #9ca3af;
         }
-        tr:nth-child(1) .rank { color: var(--yellow); }
-        tr:nth-child(2) .rank { color: #c0c0c0; }
-        tr:nth-child(3) .rank { color: #cd7f32; }
 
-        .name { color: var(--green); }
+        /* ── Site footer ─── */
+        footer { text-align: center; padding: 40px 20px; font-size: 0.75rem; color: #9ca3af; line-height: 2.2; }
+        footer a { color: var(--orange); font-weight: 700; text-decoration: none; }
 
-        /* ── Empty state ────────────────────────────────────────────── */
-        .empty {
-            padding: 40px 22px;
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--dim);
+        /* ── Responsive ─── */
+        @media (max-width: 920px) {
+            .boards { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 1.5rem; }
+            nav { padding: 0 16px; }
+            main { padding: 28px 16px 60px; }
         }
-        .empty span { display: block; margin-bottom: 8px; font-size: 1.4rem; }
-
-        /* ── Footer ─────────────────────────────────────────────────── */
-        footer {
-            text-align: center;
-            margin-top: 60px;
-            font-size: 0.7rem;
-            color: #2a2a2a;
-            letter-spacing: 1px;
-        }
-        footer a { color: var(--dim); text-decoration: none; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="ascii">
- _____ _   _ ___ ____   ___         ____                     _  ___ _
-/ ____| | | |_ _|  _ \ / _ \  _   |  _ \__      __ _ __  _ | |/ (_) |_
-\___ \| |_| || || |_) | | | |(_)  | |_) \ \ /\ / /| '_ \| | ' /| | __|
- ___) |  _  || ||  _ <| |_| | _   |  __/ \ V  V / | | | | | . \| | |_
-|____/|_| |_|___|_| \_\\___/ (_)  |_|     \_/\_/  |_| |_|_|_|\_\_|\__|
+<nav>
+    <a class="nav-logo" href="#">
+        <div class="nav-logo-icon">⚡</div>
+        <span>Shiro + PwnKit</span>
+    </a>
+    <div class="nav-chip orange">排行榜</div>
+    <div class="nav-chip outline">CTF Challenge</div>
+    <div class="nav-live">
+        <span class="live-dot"></span>
+        <span>实时更新</span>
+        <span id="nav-time"></span>
     </div>
-    <h1>CHALLENGE RANKING</h1>
-    <div class="subtitle">CVE-2016-4437 · CVE-2021-4034 · AUTO-REFRESH EVERY 30s</div>
-</header>
+</nav>
 
-<div class="status-bar">
-    <span><span class="dot"></span> LIVE</span>
-    <span>Last updated: <span id="last-update">—</span></span>
-    <span id="counts">Loading...</span>
-</div>
+<main>
+    <div class="hero">
+        <div class="hero-label">🏆 Hall of Fame</div>
+        <h1>挑战赛 <em>排行榜</em></h1>
+        <p>CVE-2016-4437 · Apache Shiro RememberMe RCE &nbsp;+&nbsp; CVE-2021-4034 · PwnKit 提权</p>
+    </div>
 
-<div class="boards">
-
-    <!-- User leaderboard -->
-    <div class="board user">
-        <div class="board-header">
-            <div class="label">STAGE 1</div>
-            <h2>[ USER ACCESS ]</h2>
-            <div class="desc">Obtained via Apache Shiro RememberMe RCE (CVE-2016-4437)</div>
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-label">🔓 用户权限 解题人数</div>
+            <div class="stat-value c-blue" id="stat-user">—</div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nickname</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody id="user-body">
-                <tr><td colspan="3" class="empty"><span>⏳</span>Loading...</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Root leaderboard -->
-    <div class="board root">
-        <div class="board-header">
-            <div class="label">STAGE 2</div>
-            <h2>[ ROOT ACCESS ]</h2>
-            <div class="desc">Obtained via PwnKit privilege escalation (CVE-2021-4034)</div>
+        <div class="stat">
+            <div class="stat-label">👑 ROOT 权限 解题人数</div>
+            <div class="stat-value c-orange" id="stat-root">—</div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nickname</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody id="root-body">
-                <tr><td colspan="3" class="empty"><span>⏳</span>Loading...</td></tr>
-            </tbody>
-        </table>
+        <div class="stat">
+            <div class="stat-label">🎯 完全解题人数</div>
+            <div class="stat-value c-black" id="stat-both">—</div>
+        </div>
     </div>
 
-</div>
+    <div class="boards">
+
+        <div class="board user">
+            <div class="board-header">
+                <div class="bh-left">
+                    <div class="bh-icon">🔓</div>
+                    <div class="bh-title">
+                        <h2>用户权限排行榜</h2>
+                        <sub>Stage 1 — User Access</sub>
+                    </div>
+                </div>
+                <div class="bh-badge" id="user-badge">0 人</div>
+            </div>
+            <div class="board-cve">CVE-2016-4437 :: Apache Shiro RememberMe Cookie 反序列化漏洞</div>
+            <table>
+                <thead><tr><th>排名</th><th>用户名</th><th>解题时间</th></tr></thead>
+                <tbody id="user-body">
+                    <tr><td colspan="3"><div class="empty">
+                        <div class="empty-emoji">🔒</div>
+                        <h3>暂无解题记录</h3>
+                        <p>利用 Shiro RCE 获取 shell 后<br/>
+                           执行 <code>touch /home/ctf/players/YOUR_NAME</code></p>
+                    </div></td></tr>
+                </tbody>
+            </table>
+            <div class="board-foot">
+                <span>每 30 秒自动刷新</span>
+                <span id="user-ts"></span>
+            </div>
+        </div>
+
+        <div class="board root">
+            <div class="board-header">
+                <div class="bh-left">
+                    <div class="bh-icon">👑</div>
+                    <div class="bh-title">
+                        <h2>ROOT 权限排行榜</h2>
+                        <sub>Stage 2 — Root Access</sub>
+                    </div>
+                </div>
+                <div class="bh-badge" id="root-badge">0 人</div>
+            </div>
+            <div class="board-cve">CVE-2021-4034 :: Polkit pkexec 本地提权漏洞 (PwnKit)</div>
+            <table>
+                <thead><tr><th>排名</th><th>用户名</th><th>解题时间</th></tr></thead>
+                <tbody id="root-body">
+                    <tr><td colspan="3"><div class="empty">
+                        <div class="empty-emoji">🔑</div>
+                        <h3>暂无解题记录</h3>
+                        <p>PwnKit 提权至 root 后<br/>
+                           执行 <code>touch /root/players/YOUR_NAME</code></p>
+                    </div></td></tr>
+                </tbody>
+            </table>
+            <div class="board-foot">
+                <span>每 30 秒自动刷新</span>
+                <span id="root-ts"></span>
+            </div>
+        </div>
+
+    </div>
+</main>
 
 <footer>
-    <p>This environment is intentionally vulnerable — for CTF / educational use only.</p>
-    <p style="margin-top:6px">Challenge at port <a href="http://localhost:8080">:8080</a> &nbsp;·&nbsp; Ranking at port <a href="http://localhost:80">:80</a></p>
+    <div>⚡ Shiro + PwnKit CTF 靶场 &nbsp;|&nbsp; 仅供学习与 CTF 练习使用</div>
+    <div>
+        靶场入口: <a href="http://localhost:8080" target="_blank">:8080</a>
+        &nbsp;·&nbsp;
+        排行榜: <a href="http://localhost:80" target="_blank">:80</a>
+    </div>
 </footer>
 
 <script>
-    function rankIcon(rank) {
-        if (rank === 1) return '🥇';
-        if (rank === 2) return '🥈';
-        if (rank === 3) return '🥉';
-        return rank;
+    const MEDALS  = ['🥇', '🥈', '🥉'];
+    const ROW_CLS = ['r1', 'r2', 'r3'];
+
+    function esc(s) {
+        return String(s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function initials(name) {
+        const s = String(name).replace(/[^\w\u4e00-\u9fa5]/g, '');
+        return esc(s.substring(0, 2).toUpperCase()) || '??';
     }
 
     function renderBoard(tbodyId, entries) {
-        const tbody = document.getElementById(tbodyId);
+        const tbody  = document.getElementById(tbodyId);
+        const isUser = tbodyId === 'user-body';
         if (!entries || entries.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" class="empty">' +
-                '<span>🔒</span>No solvers yet — be the first!</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="3"><div class="empty">
+                <div class="empty-emoji">${isUser ? '🔒' : '🔑'}</div>
+                <h3>暂无解题记录</h3>
+                <p>${isUser
+                    ? '利用 Shiro RCE 获取 shell 后<br/>执行 <code>touch /home/ctf/players/YOUR_NAME</code>'
+                    : 'PwnKit 提权至 root 后<br/>执行 <code>touch /root/players/YOUR_NAME</code>'
+                }</p>
+            </div></td></tr>`;
             return;
         }
-        tbody.innerHTML = entries.map(e =>
-            `<tr>
-                <td class="rank">${rankIcon(e.rank)}</td>
-                <td class="name">${escapeHtml(e.name)}</td>
-                <td>${escapeHtml(e.time)}</td>
-            </tr>`
-        ).join('');
+        tbody.innerHTML = entries.map((e, i) => `
+            <tr class="${ROW_CLS[i] || ''}">
+                <td class="td-rank">${i < 3
+                    ? `<span class="medal">${MEDALS[i]}</span>`
+                    : `<span class="rank-n">${e.rank}</span>`
+                }</td>
+                <td><div class="td-user">
+                    <div class="avatar">${initials(e.name)}</div>
+                    <span class="uname">${esc(e.name)}</span>
+                </div></td>
+                <td class="td-time">${esc(e.time)}</td>
+            </tr>`).join('');
     }
 
-    function escapeHtml(str) {
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
+    function nowStr() {
+        return new Date().toLocaleTimeString('zh-CN', { hour12: false });
     }
 
-    function updateTime() {
-        const now = new Date();
-        const pad = n => String(n).padStart(2, '0');
-        document.getElementById('last-update').textContent =
-            `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ` +
-            `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-    }
-
-    async function fetchLeaderboard() {
+    async function refresh() {
         try {
             const resp = await fetch('/api/leaderboard');
             if (!resp.ok) throw new Error('HTTP ' + resp.status);
@@ -325,23 +365,28 @@
             renderBoard('user-body', data.user);
             renderBoard('root-body', data.root);
 
-            const total = (data.user ? data.user.length : 0) +
-                          (data.root ? data.root.length : 0);
-            document.getElementById('counts').textContent =
-                `${data.user ? data.user.length : 0} user solver(s) · ` +
-                `${data.root ? data.root.length : 0} root solver(s)`;
+            const uLen   = (data.user || []).length;
+            const rLen   = (data.root || []).length;
+            const rootSet = new Set((data.root || []).map(e => e.name));
+            const both   = (data.user || []).filter(e => rootSet.has(e.name)).length;
 
-            updateTime();
+            document.getElementById('stat-user').textContent  = uLen;
+            document.getElementById('stat-root').textContent  = rLen;
+            document.getElementById('stat-both').textContent  = both;
+            document.getElementById('user-badge').textContent = uLen + ' 人';
+            document.getElementById('root-badge').textContent = rLen + ' 人';
+
+            const t = nowStr();
+            document.getElementById('nav-time').textContent = t;
+            document.getElementById('user-ts').textContent  = '更新于 ' + t;
+            document.getElementById('root-ts').textContent  = '更新于 ' + t;
         } catch (err) {
-            console.error('Leaderboard fetch failed:', err);
+            console.error('Leaderboard fetch error:', err);
         }
     }
 
-    // Initial load
-    fetchLeaderboard();
-
-    // Auto-refresh every 30 seconds
-    setInterval(fetchLeaderboard, 30000);
+    refresh();
+    setInterval(refresh, 30000);
 </script>
 </body>
 </html>

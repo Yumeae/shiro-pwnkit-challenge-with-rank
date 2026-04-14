@@ -1,99 +1,173 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shiro Challenge - Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>控制台 — Shiro Challenge</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg:     #f5f0e8;
+            --white:  #ffffff;
+            --black:  #111827;
+            --orange: #e07b39;
+            --blue:   #3b5bdb;
+            --border: #111827;
+            --shadow: 4px 4px 0 #111827;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #0a0a0a;
-            color: #00ff41;
-            font-family: 'Courier New', monospace;
-            min-height: 100vh;
-            padding: 40px 20px;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle, rgba(0,0,0,0.13) 1px, transparent 1px);
+            background-size: 22px 22px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans SC',
+                         'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: var(--black); min-height: 100vh;
         }
-        header {
-            text-align: center;
-            margin-bottom: 40px;
+
+        /* ── Nav ─── */
+        nav {
+            background: var(--white); border-bottom: 2.5px solid var(--border);
+            box-shadow: 0 3px 0 var(--border);
+            height: 62px; padding: 0 32px;
+            display: flex; align-items: center; gap: 16px;
         }
-        header h1 {
-            font-size: 2rem;
-            letter-spacing: 4px;
+        .nav-logo {
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 900; font-size: 1.05rem;
         }
-        header p {
-            color: #555;
-            font-size: 0.85rem;
-            margin-top: 6px;
+        .logo-icon {
+            width: 36px; height: 36px; background: var(--orange);
+            border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center; font-size: 1rem;
         }
-        .user-info {
-            text-align: right;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
-            color: #aaa;
+        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+        .user-chip {
+            background: #dbe4ff; border: 1.5px solid var(--blue);
+            padding: 5px 12px; font-size: 0.8rem; font-weight: 700; color: var(--blue);
         }
-        .user-info a {
-            color: #ff4444;
-            text-decoration: none;
-            margin-left: 10px;
+        .btn-sm {
+            padding: 6px 14px; background: var(--white);
+            border: 2px solid var(--border); font-size: 0.8rem;
+            font-family: inherit; font-weight: 700; cursor: pointer;
+            transition: background 0.15s; text-decoration: none; color: var(--black);
+            display: inline-block;
         }
-        .challenge-info {
-            max-width: 800px;
-            margin: 0 auto 40px;
-            background: #111;
-            border: 1px solid #333;
-            padding: 24px;
+        .btn-sm:hover { background: var(--faint, #f3f4f6); }
+
+        /* ── Main ─── */
+        main { max-width: 920px; margin: 0 auto; padding: 44px 24px 80px; }
+
+        .page-title { margin-bottom: 36px; }
+        .page-title h1 { font-size: 1.9rem; font-weight: 900; letter-spacing: -0.5px; }
+        .page-title h1 em { font-style: normal; color: var(--orange); }
+        .page-title p { margin-top: 8px; font-size: 0.85rem; color: #6b7280; }
+
+        /* ── Step cards ─── */
+        .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; margin-bottom: 28px; }
+
+        .step {
+            background: var(--white); border: 2.5px solid var(--border);
+            box-shadow: var(--shadow); padding: 26px;
         }
-        .challenge-info h2 {
-            color: #ffcc00;
-            margin-bottom: 14px;
+        .step-badge {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 4px 10px; border: 2px solid var(--border);
+            font-size: 0.72rem; font-weight: 700; margin-bottom: 16px;
         }
-        .challenge-info ul {
-            list-style: none;
-            padding: 0;
+        .step.user .step-badge { background: #dbe4ff; color: var(--blue); }
+        .step.root .step-badge { background: #ffedd5; color: var(--orange); }
+
+        .step h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 14px; }
+
+        .step ul { list-style: none; padding: 0; }
+        .step ul li {
+            font-size: 0.82rem; color: #374151;
+            padding: 6px 0; border-bottom: 1px dashed #e5e7eb;
+            display: flex; gap: 8px; align-items: flex-start; line-height: 1.5;
         }
-        .challenge-info ul li {
-            padding: 6px 0;
-            border-bottom: 1px solid #1a1a1a;
-            font-size: 0.9rem;
-            color: #ccc;
+        .step ul li:last-child { border-bottom: none; }
+        .step ul li::before { content: '›'; color: var(--orange); font-weight: 900; flex-shrink: 0; }
+        .step ul li code {
+            background: #f3f4f6; border: 1px solid #e5e7eb;
+            padding: 0 5px; font-size: 0.73rem; color: var(--orange);
+            word-break: break-all;
         }
-        .challenge-info ul li:before {
-            content: '> ';
-            color: #00ff41;
+
+        /* ── Leaderboard link card ─── */
+        .lb-link {
+            background: var(--white); border: 2.5px solid var(--border);
+            box-shadow: var(--shadow); padding: 22px 26px;
+            display: flex; align-items: center; justify-content: space-between;
+            text-decoration: none; color: var(--black);
+            transition: transform 0.1s, box-shadow 0.1s;
         }
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 0.75rem;
-            color: #333;
+        .lb-link:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--border); }
+        .lb-left { display: flex; align-items: center; gap: 16px; }
+        .lb-icon {
+            width: 50px; height: 50px; background: #fef3c7;
+            border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
         }
+        .lb-link h4 { font-size: 1rem; font-weight: 800; }
+        .lb-link p  { font-size: 0.78rem; color: #6b7280; margin-top: 3px; }
+        .arrow { font-size: 1.6rem; color: var(--orange); font-weight: 900; }
     </style>
 </head>
 <body>
-    <div class="user-info">
-        Logged in as: <span th:text="${username}" style="color:#00ff41"></span>
-        <a href="/logout">Logout</a>
-    </div>
+    <nav>
+        <div class="nav-logo">
+            <div class="logo-icon">⚡</div>
+            <span>Shiro Challenge</span>
+        </div>
+        <div class="nav-right">
+            <span class="user-chip" th:text="${username}">admin</span>
+            <a href="/logout" class="btn-sm">退出登录</a>
+        </div>
+    </nav>
 
-    <header>
-        <h1>[ SHIRO CHALLENGE ]</h1>
-        <p>CVE-2016-4437 (Shiro RememberMe RCE) + CVE-2021-4034 (PwnKit)</p>
-    </header>
+    <main>
+        <div class="page-title">
+            <h1>挑战 <em>目标</em></h1>
+            <p>完成以下两个阶段，在排行榜上留下你的名字！</p>
+        </div>
 
-    <div class="challenge-info">
-        <h2>// Challenge Objectives</h2>
-        <ul>
-            <li>Step 1: Exploit the Apache Shiro RememberMe deserialization vulnerability to get a shell as <strong>ctf</strong> user</li>
-            <li>Step 2: Read the flag at <strong>/home/ctf/flag.txt</strong> and follow the instructions to appear on the User Leaderboard</li>
-            <li>Step 3: Exploit PwnKit (CVE-2021-4034) to escalate privileges to <strong>root</strong></li>
-            <li>Step 4: Read the flag at <strong>/root/flag.txt</strong> and follow the instructions to appear on the Root Leaderboard</li>
-            <li>View the leaderboard at <strong>http://&lt;host&gt;:80</strong></li>
-        </ul>
-    </div>
+        <div class="steps">
+            <div class="step user">
+                <div class="step-badge">🔓 STAGE 1</div>
+                <h3>用户权限 RCE</h3>
+                <ul>
+                    <li>勾选「记住我」登录，拦截响应 Cookie</li>
+                    <li>使用 Shiro 默认密钥 <code>kPH+bIxk5D2deZiIxcaaaA==</code> 伪造恶意 RememberMe Cookie</li>
+                    <li>携带 Payload 发起请求，触发反序列化 RCE</li>
+                    <li>获取 <code>ctf</code> 用户 Shell</li>
+                    <li>读取 <code>/home/ctf/flag.txt</code></li>
+                    <li>执行 <code>touch /home/ctf/players/YOUR_NAME</code> 上榜</li>
+                </ul>
+            </div>
 
-    <div class="footer">
-        This application is intentionally vulnerable. For CTF use only.
-    </div>
+            <div class="step root">
+                <div class="step-badge">👑 STAGE 2</div>
+                <h3>PwnKit 提权</h3>
+                <ul>
+                    <li>在 ctf 用户 Shell 中下载 PwnKit 利用代码</li>
+                    <li>编译并执行 CVE-2021-4034 漏洞利用程序</li>
+                    <li>通过 <code>pkexec</code> SUID 位漏洞获取 root</li>
+                    <li>读取 <code>/root/flag.txt</code></li>
+                    <li>执行 <code>touch /root/players/YOUR_NAME</code> 上榜</li>
+                </ul>
+            </div>
+        </div>
+
+        <a class="lb-link" href="http://localhost:80" target="_blank">
+            <div class="lb-left">
+                <div class="lb-icon">🏆</div>
+                <div>
+                    <h4>查看实时排行榜</h4>
+                    <p>http://&lt;host&gt;:80 &nbsp;·&nbsp; 每 30 秒自动刷新</p>
+                </div>
+            </div>
+            <div class="arrow">→</div>
+        </a>
+    </main>
 </body>
 </html>
