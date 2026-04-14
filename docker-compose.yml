@@ -7,6 +7,8 @@ services:
     volumes:
       - user_players:/home/ctf/players
       - root_players:/root/players
+    environment:
+      - LEADERBOARD_URL=http://localhost:80
     restart: unless-stopped
     cap_add:
       - SYS_ADMIN
@@ -20,6 +22,8 @@ services:
     volumes:
       - user_players:/data/normal:ro
       - root_players:/data/root:ro
+    environment:
+      - CHALLENGE_URL=http://localhost:8080
     restart: unless-stopped
     depends_on:
       - challenge

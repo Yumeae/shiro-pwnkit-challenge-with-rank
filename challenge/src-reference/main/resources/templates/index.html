@@ -111,6 +111,37 @@
         .lb-link h4 { font-size: 1rem; font-weight: 800; }
         .lb-link p  { font-size: 0.78rem; color: #6b7280; margin-top: 3px; }
         .arrow { font-size: 1.6rem; color: var(--orange); font-weight: 900; }
+
+        /* ── Mini leaderboard widget ─── */
+        #mini-lb { margin-top: 28px; }
+        .mini-lb-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+        }
+        .mini-board {
+            background: var(--white); border: 2.5px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .mini-board-hd {
+            padding: 10px 16px; border-bottom: 2px solid var(--border);
+            font-size: 0.78rem; font-weight: 800; display: flex; align-items: center; gap: 8px;
+        }
+        .mini-board.user .mini-board-hd { background: #3b5bdb; color: #fff; }
+        .mini-board.root .mini-board-hd { background: var(--orange); color: #fff; }
+        .mini-board-body { padding: 8px 0; }
+        .mini-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 7px 16px; font-size: 0.82rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .mini-row:last-child { border-bottom: none; }
+        .mini-medal { font-size: 1rem; width: 22px; flex-shrink: 0; }
+        .mini-name { font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .mini-time { font-size: 0.7rem; color: #9ca3af; font-family: monospace; }
+        .mini-empty { padding: 18px 16px; font-size: 0.78rem; color: #9ca3af; text-align: center; }
+        .mini-foot {
+            padding: 6px 16px; background: #f9fafb; border-top: 1px solid #e5e7eb;
+            font-size: 0.68rem; color: #9ca3af; text-align: right;
+        }
     </style>
 </head>
 <body>
@@ -158,16 +189,88 @@
             </div>
         </div>
 
-        <a class="lb-link" href="http://localhost:80" target="_blank">
+        <a class="lb-link" th:href="${leaderboardUrl}" target="_blank">
             <div class="lb-left">
                 <div class="lb-icon">🏆</div>
                 <div>
                     <h4>查看实时排行榜</h4>
-                    <p>http://&lt;host&gt;:80 &nbsp;·&nbsp; 每 30 秒自动刷新</p>
+                    <p>每 30 秒自动刷新</p>
                 </div>
             </div>
             <div class="arrow">→</div>
         </a>
+
+        <section id="mini-lb">
+            <div class="mini-lb-grid">
+                <div class="mini-board user">
+                    <div class="mini-board-hd">🔓 用户权限 TOP 3</div>
+                    <div class="mini-board-body" id="mini-user-body">
+                        <div class="mini-empty">加载中…</div>
+                    </div>
+                    <div class="mini-foot" id="mini-user-ts"></div>
+                </div>
+                <div class="mini-board root">
+                    <div class="mini-board-hd">👑 ROOT 权限 TOP 3</div>
+                    <div class="mini-board-body" id="mini-root-body">
+                        <div class="mini-empty">加载中…</div>
+                    </div>
+                    <div class="mini-foot" id="mini-root-ts"></div>
+                </div>
+            </div>
+        </section>
     </main>
 </body>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var LEADERBOARD_API = /*[[${leaderboardUrl}]]*/ 'http://localhost:80';
+    LEADERBOARD_API = LEADERBOARD_API.replace(/\/$/, '') + '/api/leaderboard';
+
+    var MEDALS = ['🥇', '🥈', '🥉'];
+
+    function esc(s) {
+        return String(s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function renderMini(bodyId, tsId, entries) {
+        var body = document.getElementById(bodyId);
+        var ts   = document.getElementById(tsId);
+        if (!entries || entries.length === 0) {
+            body.innerHTML = '<div class="mini-empty">暂无解题记录</div>';
+        } else {
+            var top3 = entries.slice(0, 3);
+            body.innerHTML = top3.map(function(e, i) {
+                return '<div class="mini-row">' +
+                    '<span class="mini-medal">' + MEDALS[i] + '</span>' +
+                    '<span class="mini-name">' + esc(e.name) + '</span>' +
+                    '<span class="mini-time">' + esc(e.time) + '</span>' +
+                    '</div>';
+            }).join('');
+        }
+        if (ts) {
+            ts.textContent = '更新于 ' + new Date().toLocaleTimeString('zh-CN', { hour12: false });
+        }
+    }
+
+    function refreshMini() {
+        fetch(LEADERBOARD_API)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                renderMini('mini-user-body', 'mini-user-ts', data.user);
+                renderMini('mini-root-body', 'mini-root-ts', data.root);
+            })
+            .catch(function() {
+                document.getElementById('mini-user-body').innerHTML =
+                    '<div class="mini-empty">排行榜暂时不可用</div>';
+                document.getElementById('mini-root-body').innerHTML =
+                    '<div class="mini-empty">排行榜暂时不可用</div>';
+            });
+    }
+
+    refreshMini();
+    setInterval(refreshMini, 30000);
+    /*]]>*/
+</script>
 </html>

@@ -59,6 +59,20 @@
             margin-left: auto; display: flex; align-items: center; gap: 8px;
             font-size: 0.78rem; font-weight: 600; color: var(--muted);
         }
+        .nav-challenge {
+            margin-left: auto; display: flex; align-items: center;
+        }
+        .nav-challenge-btn {
+            padding: 7px 16px; background: var(--orange); color: #fff;
+            border: 2px solid var(--border);
+            font-size: 0.8rem; font-weight: 700;
+            text-decoration: none; white-space: nowrap;
+        }
+        .nav-challenge-btn:hover { opacity: 0.9; }
+        .nav-live {
+            margin-left: 16px; display: flex; align-items: center; gap: 8px;
+            font-size: 0.78rem; font-weight: 600; color: var(--muted);
+        }
         .live-dot {
             width: 8px; height: 8px; border-radius: 50%;
             background: var(--green); flex-shrink: 0;
@@ -208,6 +222,9 @@
     </a>
     <div class="nav-chip orange">排行榜</div>
     <div class="nav-chip outline">CTF Challenge</div>
+    <div class="nav-challenge">
+        <a class="nav-challenge-btn" href="{{ challenge_url }}" target="_blank">⚡ 进入靶场</a>
+    </div>
     <div class="nav-live">
         <span class="live-dot"></span>
         <span>实时更新</span>
@@ -303,7 +320,7 @@
 <footer>
     <div>⚡ Shiro + PwnKit CTF 靶场 &nbsp;|&nbsp; 仅供学习与 CTF 练习使用</div>
     <div>
-        靶场入口: <a href="http://localhost:8080" target="_blank">:8080</a>
+        靶场入口: <a href="{{ challenge_url }}" target="_blank">{{ challenge_url }}</a>
         &nbsp;·&nbsp;
         排行榜: <a href="http://localhost:80" target="_blank">:80</a>
     </div>

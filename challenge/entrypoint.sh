@@ -8,4 +8,4 @@ chown ctf:ctf /home/ctf/players 2>/dev/null || true
 
 # Start the Spring Boot / Shiro application as the ctf user
 exec su -s /bin/bash ctf -c \
-    "java -jar /app.jar --server.port=8080"
+    "java -jar /app.jar --server.port=8080 --leaderboard.url=${LEADERBOARD_URL:-http://localhost:80}"

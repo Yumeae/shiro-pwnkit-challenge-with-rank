@@ -75,6 +75,28 @@ docker-compose up --build -d
 - 挑战靶场入口 → http://\<host\>:8080
 - 排行榜        → http://\<host\>:80
 
+### 远程服务器部署
+
+默认配置下，两个服务之间的跳转链接使用 `localhost`，适合本地运行。
+部署到远程服务器时，需要在 `docker-compose.yml` 中将以下两个环境变量替换为服务器的**公网 IP 或域名**，
+以确保浏览器侧服务互跳及嵌入式排行榜小组件正常工作：
+
+```yaml
+services:
+  challenge:
+    environment:
+      - LEADERBOARD_URL=http://YOUR_HOST:80   # 浏览器访问排行榜的地址
+
+  leaderboard:
+    environment:
+      - CHALLENGE_URL=http://YOUR_HOST:8080   # 浏览器访问靶场的地址
+```
+
+| 变量 | 服务 | 用途 |
+|---|---|---|
+| `LEADERBOARD_URL` | `challenge` | Shiro 首页跳转链接 & 嵌入式迷你排行榜 API 地址 |
+| `CHALLENGE_URL` | `leaderboard` | 排行榜页面「进入靶场」按钮及页脚链接 |
+
 ---
 
 ## 挑战攻略

@@ -3,6 +3,7 @@ package com.ctf.shiro.controller;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,10 +11,14 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class HomeController {
 
+    @Value("${leaderboard.url:http://localhost:80}")
+    private String leaderboardUrl;
+
     @GetMapping("/")
     public String index(Model model) {
         Subject subject = SecurityUtils.getSubject();
         model.addAttribute("username", subject.getPrincipal());
+        model.addAttribute("leaderboardUrl", leaderboardUrl);
         return "index";
     }
 
