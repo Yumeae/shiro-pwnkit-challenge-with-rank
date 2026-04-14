@@ -30,7 +30,7 @@ RUN printf 'deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main re
 deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-updates main restricted universe multiverse\n\
 deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-security main restricted universe multiverse\n' \
     > /etc/apt/sources.list && \
-    printf 'Acquire::Check-Valid-Until "false";\n' \
+    printf 'Acquire::Check-Valid-Until "false";\nAcquire::https::Verify-Peer "false";\nAcquire::https::Verify-Host "false";\n' \
     > /etc/apt/apt.conf.d/99snapshot
 
 # Install only the runtime packages needed.
