@@ -1,32 +1,31 @@
-# Shiro + PwnKit Challenge with Ranking
+# Shiro + PwnKit 挑战赛（含排行榜）
 
 一个结合 Apache Shiro 反序列化 RCE 和 PwnKit 提权的网络安全靶场，附带实时排行榜。
 
-A CTF-style security challenge combining Apache Shiro RememberMe deserialization RCE
-(CVE-2016-4437) and PwnKit privilege escalation (CVE-2021-4034), with a live leaderboard
-that auto-updates when contestants create their name-files in the target directories.
+CTF 风格的安全挑战靶场，融合了 Apache Shiro RememberMe 反序列化 RCE（CVE-2016-4437）
+与 PwnKit 本地提权（CVE-2021-4034），并配有实时排行榜——选手在目标目录创建以自己名字命名
+的文件后，排行榜将自动更新。
 
-> ⚠️ **For educational / CTF use only. Run in an isolated environment.**
+> ⚠️ **仅供学习与 CTF 练习使用，请在隔离环境中运行。**
 
 ---
 
-## ⚠ Security Warning — Intentionally Vulnerable Dependencies
+## ⚠ 安全警告 — 故意引入的漏洞依赖
 
-> **This application deliberately uses vulnerable library versions as the CTF
-> challenge targets. Do NOT deploy outside an isolated Docker environment.**
+> **本应用故意使用存在漏洞的依赖版本作为 CTF 挑战目标，请勿在隔离的 Docker 环境之外部署。**
 
-| Dependency | Version | CVE | Why kept |
+| 依赖 | 版本 | CVE | 保留原因 |
 |---|---|---|---|
-| `org.apache.shiro:shiro-spring` | **1.2.4** | CVE-2016-4437 | Hardcoded AES rememberMe key — **this IS Stage 1 of the challenge** |
-| `commons-collections:commons-collections` | **3.2.1** | CVE-2015-6420 | InvokerTransformer gadget chain — **required for the Shiro RCE payload** |
-| Ubuntu `pkexec` (polkit) | **Ubuntu 20.04 default** | CVE-2021-4034 | PwnKit SUID exploit — **this IS Stage 2 of the challenge** |
+| `org.apache.shiro:shiro-spring` | **1.2.4** | CVE-2016-4437 | 硬编码 AES rememberMe 密钥 — **这正是挑战第一阶段的攻击目标** |
+| `commons-collections:commons-collections` | **3.2.1** | CVE-2015-6420 | InvokerTransformer Gadget 链 — **Shiro RCE Payload 执行所必需** |
+| Ubuntu `pkexec` (polkit) | **Ubuntu 20.04 默认版本** | CVE-2021-4034 | PwnKit SUID 漏洞利用 — **这正是挑战第二阶段的攻击目标** |
 
-Upgrading any of the above would break the challenge objectives.
-See [`SECURITY_NOTICE.md`](./SECURITY_NOTICE.md) for the full isolation checklist.
+升级以上任何依赖都会导致挑战目标失效。
+完整的隔离部署检查清单请参见 [`SECURITY_NOTICE.md`](./SECURITY_NOTICE.md)。
 
 ---
 
-## Architecture
+## 架构
 
 ```
 ┌──────────────────────────────────────────────────┐
@@ -37,35 +36,35 @@ See [`SECURITY_NOTICE.md`](./SECURITY_NOTICE.md) for the full isolation checklis
 │  │                 │    │                      │ │
 │  │ Spring Boot +   │    │ Python Flask         │ │
 │  │ Shiro 1.2.4     │    │                      │ │
-│  │ (CVE-2016-4437) │    │ Reads player files   │ │
-│  │                 │    │ from shared volumes  │ │
-│  │ Ubuntu 20.04 +  │    │                      │ │
-│  │ polkit/pkexec   │    │ Serves HTML + JSON   │ │
-│  │ (CVE-2021-4034) │    │ leaderboard API      │ │
+│  │ (CVE-2016-4437) │    │ 从共享卷读取选手文件 │ │
+│  │                 │    │                      │ │
+│  │ Ubuntu 20.04 +  │    │ 提供 HTML + JSON     │ │
+│  │ polkit/pkexec   │    │ 排行榜 API           │ │
+│  │ (CVE-2021-4034) │    │                      │ │
 │  └────────┬────────┘    └──────────┬───────────┘ │
-│           │  volumes               │             │
+│           │  数据卷                │             │
 │           │  user_players ─────────┤             │
 │           │  root_players ─────────┘             │
 └──────────────────────────────────────────────────┘
 ```
 
-### Services
+### 服务说明
 
-| Service       | Port | Description                                  |
+| 服务          | 端口 | 描述                                         |
 |---------------|------|----------------------------------------------|
-| `challenge`   | 8080 | Vulnerable Shiro web app + PwnKit environment|
-| `leaderboard` | 80   | Live ranking board (auto-refreshes every 30s)|
+| `challenge`   | 8080 | 存在漏洞的 Shiro Web 应用 + PwnKit 环境      |
+| `leaderboard` | 80   | 实时排行榜（每 30 秒自动刷新）               |
 
 ---
 
-## Quick Start
+## 快速开始
 
-### Prerequisites
+### 前置条件
 
 - Docker >= 20.10
 - Docker Compose >= 1.29
 
-### Run
+### 启动
 
 ```bash
 git clone https://github.com/Yumeae/shiro-pwnkit-challenge-with-rank.git
@@ -73,63 +72,62 @@ cd shiro-pwnkit-challenge-with-rank
 docker-compose up --build -d
 ```
 
-- Challenge web app → http://\<host\>:8080
-- Leaderboard       → http://\<host\>:80
+- 挑战靶场入口 → http://\<host\>:8080
+- 排行榜        → http://\<host\>:80
 
 ---
 
-## Challenge Walk-through
+## 挑战攻略
 
-### Stage 1 — Shiro RememberMe RCE (CVE-2016-4437)
+### 第一阶段 — Shiro RememberMe RCE（CVE-2016-4437）
 
-Apache Shiro ≤ 1.2.4 ships with a **hardcoded AES key** (`kPH+bIxk5D2deZiIxcaaaA==`) used
-to encrypt the `rememberMe` cookie.  An attacker can forge a cookie that contains a
-serialized Java payload (e.g. via Commons Collections gadget chain) to achieve RCE.
+Apache Shiro ≤ 1.2.4 内置了**硬编码 AES 密钥**（`kPH+bIxk5D2deZiIxcaaaA==`）用于加密
+`rememberMe` Cookie。攻击者可伪造包含序列化 Java Payload 的 Cookie（例如通过
+Commons Collections Gadget 链）从而实现远程代码执行。
 
-1. Navigate to `http://<host>:8080/login`
-2. Log in with **Remember Me** checked (credentials: `admin` / `admin123`)
-3. Craft a malicious `rememberMe` cookie using ysoserial or shiro-exploit tools
-4. Send the crafted cookie to the server → get a reverse shell as user `ctf`
-5. Read `/home/ctf/flag.txt` for the flag and leaderboard instructions
-6. Run: `touch /home/ctf/players/<YOUR_NICKNAME>`
+1. 访问 `http://<host>:8080/login`
+2. 勾选 **记住我**，使用账号 `admin` / `admin123` 登录
+3. 使用 ysoserial 或 shiro-exploit 等工具构造恶意 `rememberMe` Cookie
+4. 携带伪造 Cookie 发起请求 → 以 `ctf` 用户身份获取反弹 Shell
+5. 读取 `/home/ctf/flag.txt` 获取 Flag 及上榜说明
+6. 执行：`touch /home/ctf/players/<YOUR_NICKNAME>`
 
-### Stage 2 — PwnKit Privilege Escalation (CVE-2021-4034)
+### 第二阶段 — PwnKit 本地提权（CVE-2021-4034）
 
-The container runs Ubuntu 20.04 with a vulnerable version of `polkit` (`pkexec`).
-PwnKit allows any unprivileged local user to escalate to `root`.
+容器运行 Ubuntu 20.04，其中 `polkit`（`pkexec`）为存在漏洞的默认版本。
+PwnKit 允许任意无权限本地用户提升至 `root`。
 
-1. From the `ctf` shell obtained in Stage 1
-2. Download and compile a PwnKit exploit (e.g. https://github.com/ly4k/PwnKit)
-3. Execute it → get a root shell
-4. Read `/root/flag.txt` for the root flag and leaderboard instructions
-5. Run: `touch /root/players/<YOUR_NICKNAME>`
+1. 在第一阶段获取的 `ctf` Shell 中操作
+2. 下载并编译 PwnKit 漏洞利用代码（如 https://github.com/ly4k/PwnKit）
+3. 执行 → 获取 root Shell
+4. 读取 `/root/flag.txt` 获取 root Flag 及上榜说明
+5. 执行：`touch /root/players/<YOUR_NICKNAME>`
 
-### Leaderboard
+### 排行榜
 
-The leaderboard at `http://<host>:80` reads the filenames from:
+排行榜地址 `http://<host>:80`，读取以下目录中的文件名：
 
-- `/home/ctf/players/`  → **User Access** ranking
-- `/root/players/`      → **Root Access** ranking
+- `/home/ctf/players/`  → **用户权限**排名
+- `/root/players/`      → **ROOT 权限**排名
 
-Rankings are sorted by file modification time (first solver = rank 1) and
-auto-refresh every **30 seconds**.
+排名按文件修改时间升序排列（最先解题者排名第一），每 **30 秒**自动刷新。
 
 ---
 
-## Directory Layout
+## 目录结构
 
 ```
 .
 ├── docker-compose.yml
-├── challenge/                    # Vulnerable target machine
+├── challenge/                    # 存在漏洞的靶机
 │   ├── Dockerfile
 │   ├── entrypoint.sh
-│   ├── pom.xml                   # Maven build: Spring Boot + Shiro 1.2.4
+│   ├── pom.xml                   # Maven 构建：Spring Boot + Shiro 1.2.4
 │   └── src/
 │       └── main/
 │           ├── java/com/ctf/shiro/
 │           │   ├── Application.java
-│           │   ├── config/ShiroConfig.java     # Hardcoded rememberMe key
+│           │   ├── config/ShiroConfig.java     # 硬编码 rememberMe 密钥
 │           │   ├── realm/UserRealm.java
 │           │   └── controller/HomeController.java
 │           └── resources/
@@ -137,34 +135,34 @@ auto-refresh every **30 seconds**.
 │               └── templates/
 │                   ├── login.html
 │                   └── index.html
-└── leaderboard/                  # Ranking service
+└── leaderboard/                  # 排行榜服务
     ├── Dockerfile
-    ├── app.py                    # Flask API + file reader
+    ├── app.py                    # Flask API + 文件读取器
     ├── requirements.txt
     └── templates/
-        └── index.html            # Hacker-themed dual leaderboard UI
+        └── index.html            # 双榜排行榜界面
 ```
 
 ---
 
-## Flags
+## Flag 说明
 
-| Stage | File              | Default value                                |
-|-------|-------------------|----------------------------------------------|
-| User  | `/home/ctf/flag.txt` | `flag{user_b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8}` |
-| Root  | `/root/flag.txt`     | `flag{root_f0e1d2c3b4a5968778695a4b3c2d1e0f}` |
+| 阶段 | 文件                   | 默认值                                         |
+|------|------------------------|------------------------------------------------|
+| 用户 | `/home/ctf/flag.txt`   | `flag{user_b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8}` |
+| Root | `/root/flag.txt`       | `flag{root_f0e1d2c3b4a5968778695a4b3c2d1e0f}` |
 
-> Customize the flag values in `challenge/Dockerfile` before deployment.
+> 在部署前，请在 `challenge/Dockerfile` 中自定义 Flag 值。
 
 ---
 
-## Stopping
+## 停止服务
 
 ```bash
 docker-compose down
 ```
 
-To also remove the leaderboard player data volumes:
+如需同时删除排行榜选手数据卷：
 
 ```bash
 docker-compose down -v
