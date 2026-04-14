@@ -18,10 +18,20 @@ FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Ubuntu 20.04 (Focal) reached EOL in April 2025; packages moved to old-releases.
-RUN sed -i \
-    's|http://archive.ubuntu.com|http://old-releases.ubuntu.com|g; s|http://security.ubuntu.com|http://old-releases.ubuntu.com|g' \
-    /etc/apt/sources.list
+# Ubuntu 20.04 (Focal) reached EOL in April 2025; archive.ubuntu.com and
+# old-releases.ubuntu.com may not reliably serve focal packages.
+# Use the official Ubuntu snapshot archive pinned to December 2021 — before the
+# polkit CVE-2021-4034 patch (USN-5252-1, January 2022) — so that:
+#   • Packages are always resolvable regardless of mirror/EOL status.
+#   • The vulnerable polkit version required for the PwnKit CTF stage is installed.
+# Acquire::Check-Valid-Until=false is required because the snapshot Release files
+# have a ValidUntil timestamp that has long since passed.
+RUN printf 'deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main restricted universe multiverse\n\
+deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-updates main restricted universe multiverse\n\
+deb http://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-security main restricted universe multiverse\n' \
+    > /etc/apt/sources.list && \
+    printf 'Acquire::Check-Valid-Until "false";\n' \
+    > /etc/apt/apt.conf.d/99snapshot
 
 # Install only the runtime packages needed.
 # polkit is intentionally kept at the Ubuntu 20.04 default version which is
