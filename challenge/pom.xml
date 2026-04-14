@@ -84,6 +84,43 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <!--
+              OWASP Dependency-Check plugin — configured to suppress the
+              intentionally vulnerable dependencies that are the CTF targets.
+              Run with: mvn dependency-check:check
+              All suppressed CVEs are documented in dependency-check-suppressions.xml
+              and in SECURITY_NOTICE.md.
+            -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>9.2.0</version>
+                <configuration>
+                    <!--
+                      Point to the suppression file that acknowledges the
+                      intentionally vulnerable CTF dependencies.
+                    -->
+                    <suppressionFiles>
+                        <suppressionFile>${project.basedir}/dependency-check-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
+                    <!--
+                      Fail the build only on CVSS >= 7 (high/critical) for
+                      dependencies that are NOT part of the intentional attack
+                      surface.  The CTF target dependencies are suppressed above.
+                    -->
+                    <failBuildOnCVSS>7</failBuildOnCVSS>
+                    <!-- Skip test-scope dependencies -->
+                    <skipTestScope>true</skipTestScope>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

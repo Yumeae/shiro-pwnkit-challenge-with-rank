@@ -1,61 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  OWASP Dependency-Check suppression file for the CTF challenge application.
+  OWASP Dependency-Check suppression file — CTF challenge application.
 
-  The vulnerabilities listed here are INTENTIONAL — they are the attack surface
-  that participants are expected to exploit. See SECURITY_NOTICE.md for the
-  full rationale.
+  Every CVE listed below is INTENTIONALLY PRESENT.  These libraries are pinned
+  to their vulnerable versions because they ARE the challenge attack surface:
 
-  DO NOT apply these suppressions to any production application.
+    • commons-collections 3.2.1  → gadget chain for Shiro rememberMe RCE
+    • shiro-spring / shiro-web / shiro-core 1.2.4  → CVE-2016-4437 target
+
+  DO NOT copy these suppressions into any production project.
+  Full rationale: see ../SECURITY_NOTICE.md
 -->
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
 
-    <!--
-      commons-collections 3.2.1
-      CVE-2015-6420 / CVE-2015-7501 — Deserialization gadget chain.
-      INTENTIONAL: required for the Shiro rememberMe RCE exploit gadget chain.
-    -->
+    <!-- ================================================================
+         commons-collections 3.2.1
+         All deserialization-gadget-chain CVEs are intentional.
+         ================================================================ -->
+
     <suppress>
-        <notes>
-            Intentionally vulnerable CTF dependency.
-            commons-collections 3.2.1 provides the InvokerTransformer gadget
-            chain needed for CVE-2016-4437 (Shiro rememberMe RCE).
-          See SECURITY_NOTICE.md.
-        </notes>
+        <notes>Intentional CTF gadget-chain dependency. See SECURITY_NOTICE.md.</notes>
         <gav regex="true">^commons-collections:commons-collections:3\.2\.1$</gav>
         <cve>CVE-2015-6420</cve>
     </suppress>
+
     <suppress>
-        <notes>Intentionally vulnerable CTF dependency. See SECURITY_NOTICE.md.</notes>
+        <notes>Intentional CTF gadget-chain dependency. See SECURITY_NOTICE.md.</notes>
         <gav regex="true">^commons-collections:commons-collections:3\.2\.1$</gav>
         <cve>CVE-2015-7501</cve>
     </suppress>
 
     <!--
-      shiro-spring 1.2.4
-      CVE-2016-4437 — Hardcoded rememberMe AES key enabling RCE.
-      INTENTIONAL: this IS the CTF Stage 1 challenge target.
+      Some scanners report the commons-collections deserialization issue under
+      different identifiers (GHSA IDs, NVD duplicates, vendor advisories).
+      Suppress by package coordinate so every variant is covered.
     -->
     <suppress>
-        <notes>
-            Intentionally vulnerable CTF dependency.
-            shiro-spring 1.2.4 has a hardcoded rememberMe key (CVE-2016-4437)
-            which is the Stage 1 challenge objective.
-            See SECURITY_NOTICE.md.
-        </notes>
+        <notes>Intentional CTF gadget-chain dependency — all deserialization
+        vulnerabilities in this artifact are accepted. See SECURITY_NOTICE.md.</notes>
+        <gav regex="true">^commons-collections:commons-collections:3\.2\.1$</gav>
+        <vulnerabilityName regex="true">(?i).*insecure deserialization.*commons.collection.*</vulnerabilityName>
+    </suppress>
+
+    <suppress>
+        <notes>Intentional CTF gadget-chain dependency. See SECURITY_NOTICE.md.</notes>
+        <gav regex="true">^commons-collections:commons-collections:3\.2\.1$</gav>
+        <vulnerabilityName regex="true">(?i).*deserialization of untrusted data.*commons.collection.*</vulnerabilityName>
+    </suppress>
+
+    <!-- ================================================================
+         Apache Shiro 1.2.4  (shiro-spring, shiro-web, shiro-core, shiro-all)
+         CVE-2016-4437 and all related auth-bypass CVEs are intentional.
+         ================================================================ -->
+
+    <!-- Stage-1 challenge target: hardcoded rememberMe AES key -->
+    <suppress>
+        <notes>Intentional CTF target — Stage 1 challenge objective. See SECURITY_NOTICE.md.</notes>
         <gav regex="true">^org\.apache\.shiro:shiro-.*:1\.2\.4$</gav>
         <cve>CVE-2016-4437</cve>
     </suppress>
-    <!-- Auth-bypass CVEs in Shiro — also intentional (same vulnerable target) -->
+
+    <!-- Auth-bypass CVEs present in Shiro < 1.7.x — same vulnerable jar -->
     <suppress>
-        <notes>Intentionally vulnerable CTF dependency. See SECURITY_NOTICE.md.</notes>
+        <notes>Intentional CTF target — same vulnerable Shiro jar. See SECURITY_NOTICE.md.</notes>
         <gav regex="true">^org\.apache\.shiro:shiro-.*:1\.2\.4$</gav>
         <cve>CVE-2020-17523</cve>
     </suppress>
+
     <suppress>
-        <notes>Intentionally vulnerable CTF dependency. See SECURITY_NOTICE.md.</notes>
+        <notes>Intentional CTF target. See SECURITY_NOTICE.md.</notes>
         <gav regex="true">^org\.apache\.shiro:shiro-.*:1\.2\.4$</gav>
         <cve>CVE-2020-13933</cve>
+    </suppress>
+
+    <suppress>
+        <notes>Intentional CTF target. See SECURITY_NOTICE.md.</notes>
+        <gav regex="true">^org\.apache\.shiro:shiro-.*:1\.2\.4$</gav>
+        <cve>CVE-2020-11989</cve>
+    </suppress>
+
+    <suppress>
+        <notes>Intentional CTF target. See SECURITY_NOTICE.md.</notes>
+        <gav regex="true">^org\.apache\.shiro:shiro-.*:1\.2\.4$</gav>
+        <cve>CVE-2019-12422</cve>
+    </suppress>
+
+    <suppress>
+        <notes>Intentional CTF target. See SECURITY_NOTICE.md.</notes>
+        <gav regex="true">^org\.apache\.shiro:shiro-.*:1\.2\.4$</gav>
+        <cve>CVE-2016-6802</cve>
+    </suppress>
+
+    <!-- Catch-all for any additional Shiro CVEs reported against 1.2.4 -->
+    <suppress>
+        <notes>Intentional CTF target — all vulnerabilities in Shiro 1.2.4 are
+        accepted as part of the challenge design. See SECURITY_NOTICE.md.</notes>
+        <gav regex="true">^org\.apache\.shiro:shiro-.*:1\.2\.4$</gav>
+        <vulnerabilityName regex="true">(?i).*authentication bypass.*apache shiro.*</vulnerabilityName>
     </suppress>
 
 </suppressions>
