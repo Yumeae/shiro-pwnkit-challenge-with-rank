@@ -18,12 +18,6 @@ FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Ubuntu 20.04 reached end-of-standard-support in April 2025; packages moved
-# to old-releases.ubuntu.com.  Remap sources before any apt invocation so that
-# apt-get update can still resolve package lists.
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu|http://old-releases.ubuntu.com/ubuntu|g' /etc/apt/sources.list && \
-    sed -i 's|http://security.ubuntu.com/ubuntu|http://old-releases.ubuntu.com/ubuntu|g' /etc/apt/sources.list
-
 # Install only the runtime packages needed.
 # polkit is intentionally kept at the Ubuntu 20.04 default version which is
 # vulnerable to CVE-2021-4034 (PwnKit). Do NOT run apt-get upgrade.
