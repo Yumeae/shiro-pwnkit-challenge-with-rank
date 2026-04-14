@@ -84,4 +84,6 @@ RUN chmod +x /entrypoint.sh
 
 EXPOSE 8080
 
+ENV LEADERBOARD_URL=http://localhost:80
+
 ENTRYPOINT ["/entrypoint.sh"]

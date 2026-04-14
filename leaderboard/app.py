@@ -1,11 +1,14 @@
 import os
 import time
 from flask import Flask, jsonify, render_template
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 NORMAL_DIR = os.environ.get("NORMAL_DIR", "/data/normal")
 ROOT_DIR = os.environ.get("ROOT_DIR", "/data/root")
+CHALLENGE_URL = os.environ.get("CHALLENGE_URL", "http://localhost:8080")
 
 # Files to exclude from leaderboard listings
 EXCLUDED_NAMES = {
@@ -52,7 +55,7 @@ def list_players(directory: str) -> list:
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", challenge_url=CHALLENGE_URL)
 
 
 @app.route("/api/leaderboard")
