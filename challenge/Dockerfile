@@ -24,12 +24,18 @@ ENV DEBIAN_FRONTEND=noninteractive
 # polkit CVE-2021-4034 patch (USN-5252-1, January 2022) — so that:
 #   • Packages are always resolvable regardless of mirror/EOL status.
 #   • The vulnerable polkit version required for the PwnKit CTF stage is installed.
-# Only the base "focal" pocket is listed; focal-updates and focal-security are
-# intentionally omitted because (a) those pockets are not available at this
-# snapshot timestamp and (b) we must NOT pull in the patched polkit version.
+# focal, focal-updates, and focal-security are all included because the
+# ubuntu:20.04 base Docker image ships packages from focal-updates; listing only
+# the base focal pocket leaves apt without the intermediate versions it needs to
+# satisfy the dependency chain (e.g. gcc-9 and its transitive deps).
+# The snapshot date (Dec 2021) is before the polkit CVE-2021-4034 fix
+# (USN-5252-1, January 25 2022), so focal-updates/focal-security at this
+# timestamp still carry the VULNERABLE polkit, which is correct for the CTF.
 # Acquire::Check-Valid-Until=false is required because the snapshot Release files
 # have a ValidUntil timestamp that has long since passed.
-RUN printf 'deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main restricted universe multiverse\n' \
+RUN printf 'deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main restricted universe multiverse\n\
+deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-updates main restricted universe multiverse\n\
+deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-security main restricted universe multiverse\n' \
     > /etc/apt/sources.list && \
     printf 'Acquire::Check-Valid-Until "false";\nAcquire::https::Verify-Peer "false";\nAcquire::https::Verify-Host "false";\n' \
     > /etc/apt/apt.conf.d/99snapshot
@@ -46,11 +52,10 @@ RUN printf 'deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main r
 # unsatisfiable libpam-systemd dependency.  pkexec still functions correctly
 # without the PAM-systemd module present.
 #
-# --allow-downgrades + libc6=2.31-0ubuntu9: the latest ubuntu:20.04 base image
-# ships libc6 2.31-0ubuntu9.17 (from focal-updates) but the Dec 2021 snapshot
-# only has libc6-dev 2.31-0ubuntu9 which requires exactly libc6 (= 2.31-0ubuntu9).
-# Pinning libc6 to the snapshot version resolves the dependency chain for
-# libc6-dev, gcc, and gcc-9.
+# --allow-downgrades: the ubuntu:20.04 base image ships packages from
+# focal-updates which may be newer than the versions in the Dec 2021 snapshot.
+# This flag lets apt downgrade them when needed to satisfy dependency chains
+# (e.g. libc6 / libc6-dev, gcc-9 and its transitive dependencies).
 #
 # Basic CTF utilities (curl, wget, gcc, make, python3, vim, net-tools) are
 # included so that players can download and compile exploit tools inside the
@@ -63,7 +68,6 @@ RUN apt-get update && \
         bash \
         libpolkit-agent-1-0 \
         libpolkit-gobject-1-0 \
-        libc6=2.31-0ubuntu9 \
         libc6-dev \
         curl \
         wget \
