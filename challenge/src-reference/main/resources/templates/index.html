@@ -12,31 +12,17 @@
         * { box-sizing: border-box; }
 
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
-            font-family: 'Press Start 2P', "PingFang SC", "Microsoft YaHei", sans-serif;
-            color: #e0e0e0;
+            background-color: #f8f8f8;
+            font-family: 'Press Start 2P', monospace;
+            color: #212529;
             min-height: 100vh;
             margin: 0;
         }
 
-        /* ── NES container overrides ── */
-        .nes-container {
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(255,255,255,0.15);
-            border-radius: 6px;
-            color: #e0e0e0;
-        }
-        .nes-container.with-title > .title {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: #fbbf24;
-        }
-
         /* ── Nav ── */
         nav {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 2px solid rgba(255,255,255,0.1);
+            background-color: #fff;
+            border-bottom: 4px solid #212529;
             padding: 12px 24px;
             display: flex;
             align-items: center;
@@ -47,7 +33,7 @@
             align-items: center;
             gap: 10px;
             font-size: 0.75rem;
-            color: #e0e0e0;
+            color: #212529;
         }
         .nav-logo-icon { font-size: 1.4rem; }
         .nav-right {
@@ -58,7 +44,7 @@
         }
         .user-chip {
             font-size: 0.55rem;
-            color: #60a5fa;
+            color: #209cee;
         }
         .btn-logout {
             font-size: 0.52rem;
@@ -77,13 +63,13 @@
         }
         .page-title h1 {
             font-size: 1rem;
-            color: #fbbf24;
-            text-shadow: 0 0 12px rgba(251,191,36,0.5), 2px 2px 0 rgba(0,0,0,0.4);
+            color: #e76e00;
+            text-shadow: 4px 4px #ccc;
             margin-bottom: 10px;
         }
         .page-title p {
             font-size: 0.55rem;
-            color: #94a3b8;
+            color: #555;
             line-height: 1.8;
         }
 
@@ -101,7 +87,6 @@
         .chapter h3 {
             font-size: 0.7rem;
             margin-bottom: 14px;
-            color: #e0e0e0;
         }
         .chapter ul {
             list-style: none;
@@ -110,9 +95,9 @@
         }
         .chapter ul li {
             font-size: 0.5rem;
-            color: #94a3b8;
+            color: #444;
             padding: 6px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 2px solid #eee;
             display: flex;
             gap: 8px;
             align-items: flex-start;
@@ -121,11 +106,11 @@
         .chapter ul li:last-child { border-bottom: none; }
         .chapter ul li::before {
             content: '›';
-            color: #60a5fa;
+            color: #209cee;
             font-weight: 900;
             flex-shrink: 0;
         }
-        .chapter.ch2 ul li::before { color: #fbbf24; }
+        .chapter.ch2 ul li::before { color: #e76e00; }
 
         /* ── Leaderboard link ── */
         .lb-link-wrap {
@@ -136,19 +121,15 @@
             align-items: center;
             justify-content: space-between;
             text-decoration: none;
-            color: #e0e0e0;
+            color: #212529;
             padding: 16px;
             font-size: 0.6rem;
-            transition: background 0.2s;
-        }
-        .lb-link:hover {
-            background: rgba(255,255,255,0.04);
         }
         .lb-link .lb-icon { font-size: 1.6rem; margin-right: 12px; }
         .lb-left { display: flex; align-items: center; }
-        .lb-link h4 { font-size: 0.65rem; margin-bottom: 6px; color: #e0e0e0; }
-        .lb-link p  { font-size: 0.5rem; color: #94a3b8; }
-        .lb-arrow { font-size: 1.2rem; color: #60a5fa; }
+        .lb-link h4 { font-size: 0.65rem; margin-bottom: 6px; }
+        .lb-link p  { font-size: 0.5rem; color: #555; }
+        .lb-arrow { font-size: 1.2rem; color: #209cee; }
 
         /* ── Mini leaderboard ── */
         .mini-lb-grid {
@@ -165,7 +146,7 @@
             align-items: center;
             gap: 10px;
             padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 2px solid #eee;
             font-size: 0.52rem;
         }
         .mini-row:last-child { border-bottom: none; }
@@ -175,22 +156,22 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: #e0e0e0;
+            color: #212529;
         }
         .mini-time {
             font-size: 0.45rem;
-            color: #94a3b8;
+            color: #666;
             font-family: monospace;
         }
         .mini-empty {
             font-size: 0.52rem;
-            color: #94a3b8;
+            color: #666;
             text-align: center;
             padding: 16px 0;
         }
         .mini-foot {
             font-size: 0.45rem;
-            color: #64748b;
+            color: #888;
             text-align: right;
             padding-top: 8px;
         }

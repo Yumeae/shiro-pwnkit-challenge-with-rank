@@ -12,9 +12,9 @@
         * { box-sizing: border-box; }
 
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
-            font-family: 'Press Start 2P', "PingFang SC", "Microsoft YaHei", sans-serif;
-            color: #e0e0e0;
+            background-color: #f8f8f8;
+            font-family: 'Press Start 2P', monospace;
+            color: #212529;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -38,42 +38,23 @@
         }
         .logo-row .logo-title {
             font-size: 0.85rem;
-            color: #fbbf24;
-            text-shadow: 0 0 10px rgba(251,191,36,0.4);
+            color: #e76e00;
         }
         .logo-row .logo-sub {
             font-size: 0.55rem;
-            color: #94a3b8;
+            color: #555;
             margin-top: 6px;
-        }
-
-        /* ── NES container overrides ── */
-        .nes-container {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-color: rgba(255,255,255,0.12);
-            border-radius: 6px;
-            color: #e0e0e0;
-        }
-        .nes-container.with-title > .title {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: #fbbf24;
-        }
-        .nes-container.is-rounded {
-            border-color: #e76e55;
-            background: rgba(231,110,85,0.1);
         }
 
         h1 {
             font-size: 0.85rem;
             margin-bottom: 6px;
             text-align: center;
-            color: #e0e0e0;
+            color: #212529;
         }
         .sub {
             font-size: 0.55rem;
-            color: #94a3b8;
+            color: #666;
             margin-bottom: 24px;
             text-align: center;
             line-height: 1.8;
@@ -85,19 +66,13 @@
         .field-group label {
             display: block;
             font-size: 0.55rem;
-            color: #94a3b8;
+            color: #555;
             margin-bottom: 8px;
         }
         .field-group .nes-input {
             width: 100%;
-            font-family: 'Press Start 2P', "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-family: 'Press Start 2P', monospace;
             font-size: 0.6rem;
-            background: rgba(255,255,255,0.08);
-            color: #e0e0e0;
-            border-color: rgba(255,255,255,0.15);
-        }
-        .field-group .nes-input::placeholder {
-            color: #64748b;
         }
 
         .remember-row {
@@ -108,14 +83,14 @@
             font-size: 0.5rem;
         }
         .remember-row label {
-            color: #94a3b8;
+            color: #555;
             cursor: pointer;
             line-height: 1.8;
         }
 
         .submit-btn {
             width: 100%;
-            font-family: 'Press Start 2P', "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-family: 'Press Start 2P', monospace;
             font-size: 0.6rem;
         }
     </style>
