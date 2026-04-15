@@ -116,8 +116,16 @@ int main(int argc, char **argv) {
     }
 
     /* ── Normal path: forward to the real pkexec ────────────────────── */
-    argv[0] = (char *)"/usr/bin/pkexec.orig";
-    execv("/usr/bin/pkexec.orig", argv);
+    {
+        /* Build a fresh argv with pkexec.orig as argv[0] to avoid
+           mutating the original argv array in place. */
+        char *new_argv[argc + 1];
+        new_argv[0] = (char *)"/usr/bin/pkexec.orig";
+        for (int i = 1; i < argc; i++)
+            new_argv[i] = argv[i];
+        new_argv[argc] = NULL;
+        execv("/usr/bin/pkexec.orig", new_argv);
+    }
     perror("pkexec");
     return 127;
 }
