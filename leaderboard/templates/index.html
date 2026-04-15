@@ -7,13 +7,20 @@
     <link rel="preconnect" href="https://fonts.loli.net" />
     <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
     <link href="https://fonts.loli.net/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://chinese-fonts-cdn.deno.dev/packages/dymh/dist/DouyinSansBold/result.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/nes.css@latest/css/nes.min.css" rel="stylesheet" />
     <style>
         * { box-sizing: border-box; }
 
+        /* ── Title positioning: center on border, left-aligned ── */
+        .nes-container.with-title > .title {
+            margin-left: 0;
+            margin-right: auto;
+        }
+
         body {
             background-color: #f8f8f8;
-            font-family: 'Press Start 2P', monospace;
+            font-family: 'Press Start 2P', 'Douyin Sans', monospace;
             color: #212529;
             min-height: 100vh;
             margin: 0;
