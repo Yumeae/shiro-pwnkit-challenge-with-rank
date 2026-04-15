@@ -16,9 +16,9 @@ chown ctf:ctf /home/ctf/players 2>/dev/null || true
         find /home/ctf /tmp -maxdepth 3 \
             \( -name 'PwnKit' -o -name 'pwnkit' -o -name 'pwnkit.*' \
                -o -name 'CVE-2021-4034' -o -name 'cve-2021-4034' \
-               -o -name 'pkexec-exploit' -o -name 'exploit' \
+               -o -name 'pkexec-exploit' -o -name 'pwnkit-exploit' \
                -o -name 'evil.so' -o -name 'evil-so.c' \) \
-            -exec rm -rf {} + 2>/dev/null || true
+            -delete 2>/dev/null || true
     done
 ) &
 
