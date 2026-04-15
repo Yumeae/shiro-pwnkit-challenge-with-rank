@@ -46,21 +46,28 @@ RUN printf 'deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main r
 # unsatisfiable libpam-systemd dependency.  pkexec still functions correctly
 # without the PAM-systemd module present.
 #
+# --allow-downgrades + libc6=2.31-0ubuntu9: the latest ubuntu:20.04 base image
+# ships libc6 2.31-0ubuntu9.17 (from focal-updates) but the Dec 2021 snapshot
+# only has libc6-dev 2.31-0ubuntu9 which requires exactly libc6 (= 2.31-0ubuntu9).
+# Pinning libc6 to the snapshot version resolves the dependency chain for
+# libc6-dev, gcc, and gcc-9.
+#
 # Basic CTF utilities (curl, wget, gcc, make, python3, vim, net-tools) are
 # included so that players can download and compile exploit tools inside the
 # container without needing to set up a cross-compilation toolchain.
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y --no-install-recommends --allow-downgrades \
         ca-certificates \
         openjdk-8-jre \
         sudo \
         bash \
         libpolkit-agent-1-0 \
         libpolkit-gobject-1-0 \
+        libc6=2.31-0ubuntu9 \
+        libc6-dev \
         curl \
         wget \
         gcc \
-        libc6-dev \
         make \
         python3 \
         vim-tiny \
