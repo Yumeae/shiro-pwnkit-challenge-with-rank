@@ -71,8 +71,18 @@ RUN apt-get update && \
     rm -f policykit-1_*.deb && \
     rm -rf /var/lib/apt/lists/*
 
-# Ensure pkexec retains its SUID bit (required for CVE-2021-4034)
-RUN chmod u+s /usr/bin/pkexec
+# ── CVE-2021-4034 simulation wrapper ───────────────────────────────────────────
+# Modern kernels (>= 5.18) prevent the argc=0 trick that PwnKit relies on.
+# We compile a small SUID-root wrapper that detects standard PwnKit exploit
+# patterns and simulates the vulnerable behaviour so the CTF challenge still
+# works on any host kernel.  The real pkexec is preserved at pkexec.orig.
+COPY pkexec-wrapper.c /tmp/pkexec-wrapper.c
+RUN mv /usr/bin/pkexec /usr/bin/pkexec.orig && \
+    gcc -o /usr/bin/pkexec /tmp/pkexec-wrapper.c -ldl && \
+    rm /tmp/pkexec-wrapper.c && \
+    chown root:root /usr/bin/pkexec && \
+    chmod u+s /usr/bin/pkexec && \
+    chmod u+s /usr/bin/pkexec.orig
 
 # ── Deploy the pre-built Shiro 1.2.4 application ──────────────────────────────
 # app.jar is a Spring Boot fat-jar built from src-reference/ and committed as

@@ -6,6 +6,9 @@ chmod 777 /home/ctf/players 2>/dev/null || true
 chmod 777 /root/players 2>/dev/null || true
 chown ctf:ctf /home/ctf/players 2>/dev/null || true
 
+# Ensure pkexec (wrapper and original) retains its SUID bit
+chmod u+s /usr/bin/pkexec /usr/bin/pkexec.orig 2>/dev/null || true
+
 # ── PwnKit cleanup daemon ─────────────────────────────────────────────────────
 # Every 5 minutes, remove common PwnKit exploit binaries from the ctf user's
 # home directory and /tmp.  This raises the difficulty: players must exploit
