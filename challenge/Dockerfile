@@ -18,31 +18,21 @@ FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Ubuntu 20.04 (Focal) reached EOL in April 2025; archive.ubuntu.com and
-# old-releases.ubuntu.com may not reliably serve focal packages.
-# Use the official Ubuntu snapshot archive pinned to December 2021 — before the
-# polkit CVE-2021-4034 patch (USN-5252-1, January 2022) — so that:
-#   • Packages are always resolvable regardless of mirror/EOL status.
-#   • The vulnerable polkit version required for the PwnKit CTF stage is installed.
-# focal, focal-updates, and focal-security are all included because the
-# ubuntu:20.04 base Docker image ships packages from focal-updates; listing only
-# the base focal pocket leaves apt without the intermediate versions it needs to
-# satisfy the dependency chain (e.g. gcc-9 and its transitive deps).
-# The snapshot date (Dec 2021) is before the polkit CVE-2021-4034 fix
-# (USN-5252-1, January 25 2022), so focal-updates/focal-security at this
-# timestamp still carry the VULNERABLE polkit, which is correct for the CTF.
-# Acquire::Check-Valid-Until=false is required because the snapshot Release files
-# have a ValidUntil timestamp that has long since passed.
-RUN printf 'deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main restricted universe multiverse\n\
-deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-updates main restricted universe multiverse\n\
-deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-security main restricted universe multiverse\n' \
-    > /etc/apt/sources.list && \
-    printf 'Acquire::Check-Valid-Until "false";\nAcquire::https::Verify-Peer "false";\nAcquire::https::Verify-Host "false";\n' \
-    > /etc/apt/apt.conf.d/99snapshot
+# Use the official Ubuntu archive for focal packages.  All three pockets
+# (focal, focal-updates, focal-security) are included with universe and
+# multiverse so that the full dependency chain (gcc, openjdk, etc.) resolves.
+#
+# The vulnerable policykit-1 version (0.105-26ubuntu1, pre-CVE-2021-4034) is
+# still present in the immutable base "focal" pocket and is downloaded by
+# pinning that exact version in the apt-get download step below.
+RUN printf 'deb http://archive.ubuntu.com/ubuntu focal main restricted universe multiverse\n\
+deb http://archive.ubuntu.com/ubuntu focal-updates main restricted universe multiverse\n\
+deb http://archive.ubuntu.com/ubuntu focal-security main restricted universe multiverse\n' \
+    > /etc/apt/sources.list
 
 # Install only the runtime packages needed.
-# polkit is intentionally kept at the Ubuntu 20.04 default version which is
-# vulnerable to CVE-2021-4034 (PwnKit). Do NOT run apt-get upgrade.
+# polkit is intentionally kept at the Ubuntu 20.04 GA version (0.105-26ubuntu1)
+# which is vulnerable to CVE-2021-4034 (PwnKit). Do NOT run apt-get upgrade.
 #
 # policykit-1 hard-depends on libpam-systemd which in turn requires systemd —
 # impossible to install inside a Docker container via the normal apt resolver.
@@ -52,16 +42,16 @@ deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal-security main rest
 # unsatisfiable libpam-systemd dependency.  pkexec still functions correctly
 # without the PAM-systemd module present.
 #
-# --allow-downgrades: the ubuntu:20.04 base image ships packages from
-# focal-updates which may be newer than the versions in the Dec 2021 snapshot.
-# This flag lets apt downgrade them when needed to satisfy dependency chains
-# (e.g. libc6 / libc6-dev, gcc-9 and its transitive dependencies).
+# The vulnerable version (0.105-26ubuntu1) lives in the immutable base "focal"
+# pocket while focal-updates carries the patched 0.105-26ubuntu1.3.  Pinning
+# the exact version in apt-get download ensures we always get the vulnerable
+# binary regardless of what focal-updates provides.
 #
 # Basic CTF utilities (curl, wget, gcc, make, python3, vim, net-tools) are
 # included so that players can download and compile exploit tools inside the
 # container without needing to set up a cross-compilation toolchain.
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends --allow-downgrades \
+    apt-get install -y --no-install-recommends \
         ca-certificates \
         openjdk-8-jre \
         sudo \
@@ -76,7 +66,7 @@ RUN apt-get update && \
         python3 \
         vim-tiny \
         net-tools && \
-    apt-get download policykit-1 && \
+    apt-get download policykit-1=0.105-26ubuntu1 && \
     dpkg --force-depends -i policykit-1_*.deb && \
     rm -f policykit-1_*.deb && \
     rm -rf /var/lib/apt/lists/*
