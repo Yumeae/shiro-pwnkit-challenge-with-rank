@@ -40,16 +40,31 @@ RUN printf 'deb https://snapshot.ubuntu.com/ubuntu/20211201T000000Z focal main r
 #
 # policykit-1 hard-depends on libpam-systemd which in turn requires systemd —
 # impossible to install inside a Docker container via the normal apt resolver.
-# Workaround: install every other package first, then download the policykit-1
-# deb and force-install it with dpkg --force-depends to skip the unsatisfiable
-# libpam-systemd dependency.  pkexec still functions correctly without the
-# PAM-systemd module present.
+# Workaround: install every other package first (including the polkit shared
+# libraries that pkexec dynamically links against), then download the
+# policykit-1 deb and force-install it with dpkg --force-depends to skip the
+# unsatisfiable libpam-systemd dependency.  pkexec still functions correctly
+# without the PAM-systemd module present.
+#
+# Basic CTF utilities (curl, wget, gcc, make, python3, vim, net-tools) are
+# included so that players can download and compile exploit tools inside the
+# container without needing to set up a cross-compilation toolchain.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         openjdk-8-jre \
         sudo \
-        bash && \
+        bash \
+        libpolkit-agent-1-0 \
+        libpolkit-gobject-1-0 \
+        curl \
+        wget \
+        gcc \
+        libc6-dev \
+        make \
+        python3 \
+        vim-tiny \
+        net-tools && \
     apt-get download policykit-1 && \
     dpkg --force-depends -i policykit-1_*.deb && \
     rm -f policykit-1_*.deb && \
