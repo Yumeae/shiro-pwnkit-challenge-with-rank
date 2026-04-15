@@ -4,25 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>迷境探索 · MazeQuest — 全服排行榜</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.loli.net" />
+    <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+    <link href="https://fonts.loli.net/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/nes.css@latest/css/nes.min.css" rel="stylesheet" />
     <style>
         * { box-sizing: border-box; }
 
         body {
-            background-color: #f8f8f8;
-            font-family: 'Press Start 2P', monospace;
-            color: #212529;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+            font-family: 'Press Start 2P', "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: #e0e0e0;
             min-height: 100vh;
             margin: 0;
         }
 
         /* ── Nav ── */
         nav {
-            background-color: #fff;
-            border-bottom: 4px solid #212529;
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(255,255,255,0.1);
             padding: 12px 24px;
             display: flex;
             align-items: center;
@@ -36,7 +38,7 @@
             align-items: center;
             gap: 10px;
             text-decoration: none;
-            color: #212529;
+            color: #e0e0e0;
             font-size: 0.75rem;
             white-space: nowrap;
         }
@@ -47,13 +49,15 @@
             align-items: center;
             gap: 8px;
             font-size: 0.6rem;
-            color: #209c00;
+            color: #4ade80;
             white-space: nowrap;
         }
         .live-dot {
             display: inline-block;
             width: 8px; height: 8px;
-            background: #209c00;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 6px #4ade80;
             animation: blink 1.2s step-start infinite;
         }
         @keyframes blink {
@@ -64,6 +68,19 @@
         .nav-btn {
             font-size: 0.55rem;
         }
+
+        /* ── NES container overrides ── */
+        .nes-container {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.15);
+            border-radius: 6px;
+            color: #e0e0e0;
+        }
+        .nes-container.with-title > .title {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fbbf24;
+        }
+        .nes-container.is-dark { background: rgba(0,0,0,0.2); }
 
         /* ── Page ── */
         .page {
@@ -79,13 +96,13 @@
         }
         .hero h1 {
             font-size: 1.1rem;
-            color: #e76e00;
+            color: #fbbf24;
             margin-bottom: 12px;
-            text-shadow: 4px 4px #ccc;
+            text-shadow: 0 0 12px rgba(251,191,36,0.5), 2px 2px 0 rgba(0,0,0,0.4);
         }
         .hero p {
             font-size: 0.65rem;
-            color: #555;
+            color: #94a3b8;
             line-height: 1.8;
         }
 
@@ -101,6 +118,11 @@
             text-align: center;
             min-width: 140px;
             padding: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .stat-box .val {
             font-size: 1.6rem;
@@ -109,11 +131,11 @@
         }
         .stat-box .lbl {
             font-size: 0.52rem;
-            color: #555;
+            color: #94a3b8;
         }
-        .val-blue   { color: #209cee; }
-        .val-gold   { color: #e76e00; }
-        .val-green  { color: #209c00; }
+        .val-blue   { color: #60a5fa; }
+        .val-gold   { color: #fbbf24; }
+        .val-green  { color: #4ade80; }
 
         /* ── Boards ── */
         .boards {
@@ -131,7 +153,7 @@
         }
         .board-count {
             font-size: 0.52rem;
-            color: #209c00;
+            color: #4ade80;
             margin-left: auto;
         }
 
@@ -147,28 +169,28 @@
         .board-table thead th {
             padding: 8px 12px;
             text-align: left;
-            color: #555;
-            border-bottom: 4px solid #212529;
+            color: #94a3b8;
+            border-bottom: 2px solid rgba(255,255,255,0.12);
             white-space: nowrap;
         }
         .board-table thead th:last-child { text-align: right; }
         .board-table tbody td {
             padding: 8px 12px;
-            border-bottom: 2px solid #ddd;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
             vertical-align: middle;
         }
         .board-table tbody td:last-child { text-align: right; }
         .board-table tbody tr:last-child td { border-bottom: none; }
-        .board-table tbody tr:hover { background: rgba(0,0,0,0.04); }
+        .board-table tbody tr:hover { background: rgba(255,255,255,0.04); }
 
         .medal { font-size: 0.9rem; }
-        .rank-n { color: #666; }
+        .rank-n { color: #94a3b8; }
 
-        .uname { color: #212529; }
+        .uname { color: #e0e0e0; }
 
         .td-time {
             font-family: monospace;
-            color: #555;
+            color: #94a3b8;
             font-size: 0.55rem;
         }
 
@@ -190,7 +212,7 @@
         .podium-medal { font-size: 1.2rem; }
         .podium-name {
             font-size: 0.5rem;
-            color: #212529;
+            color: #e0e0e0;
             max-width: 80px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -198,7 +220,7 @@
         }
         .podium-time {
             font-size: 0.42rem;
-            color: #555;
+            color: #94a3b8;
             font-family: monospace;
         }
 
@@ -206,10 +228,10 @@
         .empty {
             text-align: center;
             padding: 32px 20px;
-            color: #666;
+            color: #94a3b8;
         }
         .empty .empty-emoji { font-size: 2rem; display: block; margin-bottom: 12px; }
-        .empty h3 { font-size: 0.6rem; margin-bottom: 8px; color: #444; }
+        .empty h3 { font-size: 0.6rem; margin-bottom: 8px; color: #cbd5e1; }
         .empty p { font-size: 0.52rem; line-height: 1.8; }
 
         /* ── Board footer ── */
@@ -217,7 +239,7 @@
             display: flex;
             justify-content: space-between;
             font-size: 0.5rem;
-            color: #888;
+            color: #64748b;
             padding: 8px 4px 0;
         }
 
