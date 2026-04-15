@@ -4,173 +4,200 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MazeQuest — 玩家中心</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
     <style>
-        :root {
-            --bg:      #0d0f1a;
-            --card:    #151829;
-            --border:  #2a2f4a;
-            --accent1: #7c3aed;
-            --accent2: #f59e0b;
-            --accent1-l: rgba(124,58,237,0.12);
-            --accent2-l: rgba(245,158,11,0.12);
-            --text:    #e2e8f0;
-            --muted:   #64748b;
-            --white:   #ffffff;
-        }
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        * { box-sizing: border-box; }
+
         body {
-            background: var(--bg);
-            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans SC',
-                         'PingFang SC', 'Microsoft YaHei', sans-serif;
-            color: var(--text); min-height: 100vh;
+            background-color: #f8f8f8;
+            font-family: 'Press Start 2P', monospace;
+            color: #212529;
+            min-height: 100vh;
+            margin: 0;
         }
 
-        /* ── Nav ─── */
+        /* ── Nav ── */
         nav {
-            background: rgba(13,15,26,0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            height: 60px; padding: 0 32px;
-            display: flex; align-items: center; gap: 14px;
-            position: sticky; top: 0; z-index: 50;
+            background-color: #fff;
+            border-bottom: 4px solid #212529;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
         .nav-logo {
-            display: flex; align-items: center; gap: 10px;
-            font-weight: 800; font-size: 1.05rem; color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.75rem;
+            color: #212529;
         }
-        .nav-gem {
-            width: 34px; height: 34px; border-radius: 8px;
-            background: linear-gradient(135deg, var(--accent1), #a855f7);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; flex-shrink: 0;
+        .nav-logo-icon { font-size: 1.4rem; }
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
         .user-chip {
-            padding: 5px 12px; border-radius: 20px;
-            background: var(--accent1-l); border: 1px solid var(--accent1);
-            font-size: 0.8rem; font-weight: 700; color: #a78bfa;
+            font-size: 0.55rem;
+            color: #209cee;
         }
-        .btn-sm {
-            padding: 6px 14px; border-radius: 6px;
-            background: transparent; border: 1px solid var(--border);
-            font-size: 0.78rem; font-family: inherit; font-weight: 600;
-            cursor: pointer; text-decoration: none; color: var(--muted);
-            transition: border-color 0.15s, color 0.15s;
+        .btn-logout {
+            font-size: 0.52rem;
         }
-        .btn-sm:hover { border-color: var(--accent1); color: var(--text); }
 
-        /* ── Main ─── */
-        main { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+        /* ── Main ── */
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
 
-        .page-title { margin-bottom: 40px; }
-        .page-title h1 { font-size: 1.8rem; font-weight: 900; color: var(--white); letter-spacing: -0.5px; }
-        .page-title h1 em { font-style: normal; color: #a78bfa; }
-        .page-title p { margin-top: 8px; font-size: 0.85rem; color: var(--muted); }
+        .page-title {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+        .page-title h1 {
+            font-size: 1rem;
+            color: #e76e00;
+            text-shadow: 4px 4px #ccc;
+            margin-bottom: 10px;
+        }
+        .page-title p {
+            font-size: 0.55rem;
+            color: #555;
+            line-height: 1.8;
+        }
 
-        /* ── Chapter cards ─── */
+        /* ── Chapter cards ── */
         .chapters {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px; margin-bottom: 32px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
         }
-        .chapter {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 12px; padding: 24px;
-            transition: border-color 0.2s;
+        .chapter-title {
+            font-size: 0.65rem;
+            margin-bottom: 12px;
         }
-        .chapter:hover { border-color: var(--accent1); }
-        .chapter.ch2:hover { border-color: var(--accent2); }
-
-        .ch-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 4px 12px; border-radius: 20px;
-            font-size: 0.72rem; font-weight: 700; margin-bottom: 16px;
+        .chapter h3 {
+            font-size: 0.7rem;
+            margin-bottom: 14px;
         }
-        .chapter.ch1 .ch-badge { background: var(--accent1-l); color: #a78bfa; border: 1px solid var(--accent1); }
-        .chapter.ch2 .ch-badge { background: var(--accent2-l); color: #fbbf24; border: 1px solid var(--accent2); }
-
-        .chapter h3 { font-size: 1rem; font-weight: 800; color: var(--white); margin-bottom: 12px; }
-        .chapter ul { list-style: none; padding: 0; }
+        .chapter ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
         .chapter ul li {
-            font-size: 0.82rem; color: #94a3b8;
-            padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; gap: 8px; align-items: flex-start; line-height: 1.55;
+            font-size: 0.5rem;
+            color: #444;
+            padding: 6px 0;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            line-height: 1.8;
         }
         .chapter ul li:last-child { border-bottom: none; }
-        .chapter ul li::before { content: '›'; color: #a78bfa; font-weight: 900; flex-shrink: 0; }
-        .chapter.ch2 ul li::before { color: #fbbf24; }
+        .chapter ul li::before {
+            content: '›';
+            color: #209cee;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        .chapter.ch2 ul li::before { color: #e76e00; }
 
-        /* ── Leaderboard link card ─── */
+        /* ── Leaderboard link ── */
+        .lb-link-wrap {
+            margin-bottom: 28px;
+        }
         .lb-link {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 12px; padding: 20px 24px;
-            display: flex; align-items: center; justify-content: space-between;
-            text-decoration: none; color: var(--text);
-            transition: border-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            color: #212529;
+            padding: 16px;
+            font-size: 0.6rem;
         }
-        .lb-link:hover { border-color: var(--accent1); }
-        .lb-left { display: flex; align-items: center; gap: 16px; }
-        .lb-icon {
-            width: 48px; height: 48px; border-radius: 10px;
-            background: var(--accent2-l);
-            display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
-        }
-        .lb-link h4 { font-size: 0.95rem; font-weight: 700; color: var(--white); }
-        .lb-link p  { font-size: 0.78rem; color: var(--muted); margin-top: 3px; }
-        .arrow { font-size: 1.4rem; color: #a78bfa; }
+        .lb-link .lb-icon { font-size: 1.6rem; margin-right: 12px; }
+        .lb-left { display: flex; align-items: center; }
+        .lb-link h4 { font-size: 0.65rem; margin-bottom: 6px; }
+        .lb-link p  { font-size: 0.5rem; color: #555; }
+        .lb-arrow { font-size: 1.2rem; color: #209cee; }
 
-        /* ── Mini leaderboard ─── */
-        #mini-lb { margin-top: 28px; }
+        /* ── Mini leaderboard ── */
         .mini-lb-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
-        .mini-board {
-            background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-            overflow: hidden;
+        .mini-board-title {
+            font-size: 0.6rem;
+            margin-bottom: 10px;
         }
-        .mini-board-hd {
-            padding: 10px 16px; font-size: 0.78rem; font-weight: 700;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .mini-board.lv1 .mini-board-hd { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; }
-        .mini-board.lv2 .mini-board-hd { background: linear-gradient(135deg, #b45309, #d97706); color: #fff; }
-        .mini-board-body { padding: 6px 0; }
         .mini-row {
-            display: flex; align-items: center; gap: 10px;
-            padding: 7px 16px; font-size: 0.82rem;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 2px solid #eee;
+            font-size: 0.52rem;
         }
         .mini-row:last-child { border-bottom: none; }
-        .mini-medal { font-size: 1rem; width: 22px; flex-shrink: 0; }
-        .mini-name { font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
-        .mini-time { font-size: 0.7rem; color: var(--muted); font-family: monospace; }
-        .mini-empty { padding: 18px 16px; font-size: 0.78rem; color: var(--muted); text-align: center; }
+        .mini-medal { font-size: 1rem; width: 24px; flex-shrink: 0; }
+        .mini-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #212529;
+        }
+        .mini-time {
+            font-size: 0.45rem;
+            color: #666;
+            font-family: monospace;
+        }
+        .mini-empty {
+            font-size: 0.52rem;
+            color: #666;
+            text-align: center;
+            padding: 16px 0;
+        }
         .mini-foot {
-            padding: 6px 16px; border-top: 1px solid var(--border);
-            font-size: 0.68rem; color: var(--muted); text-align: right;
+            font-size: 0.45rem;
+            color: #888;
+            text-align: right;
+            padding-top: 8px;
         }
     </style>
 </head>
 <body>
     <nav>
         <div class="nav-logo">
-            <div class="nav-gem">🗺️</div>
+            <span class="nav-logo-icon">🗺️</span>
             <span>MazeQuest</span>
         </div>
         <div class="nav-right">
-            <span class="user-chip" th:text="${username}">player</span>
-            <a href="/logout" class="btn-sm">退出登录</a>
+            <span class="user-chip nes-text is-primary" th:text="${username}">player</span>
+            <a href="/logout" class="nes-btn btn-logout">退出登录</a>
         </div>
     </nav>
 
     <main>
         <div class="page-title">
-            <h1>玩家 <em>中心</em></h1>
+            <h1>🎮 玩家中心 🎮</h1>
             <p>完成两个章节的关卡挑战，在英雄榜上留下你的名字！</p>
         </div>
 
         <div class="chapters">
-            <div class="chapter ch1">
-                <div class="ch-badge">🗝️ 第一章</div>
+            <div class="nes-container with-title chapter ch1">
+                <p class="title chapter-title">🗝️ 第一章</p>
                 <h3>迷境入门</h3>
                 <ul>
                     <li>进入地下迷宫，探索隐藏通道</li>
@@ -180,8 +207,8 @@
                 </ul>
             </div>
 
-            <div class="chapter ch2">
-                <div class="ch-badge">👑 第二章</div>
+            <div class="nes-container with-title chapter ch2">
+                <p class="title chapter-title">👑 第二章</p>
                 <h3>传奇巅峰</h3>
                 <ul>
                     <li>穿越混沌之境，挑战终极守卫</li>
@@ -192,35 +219,34 @@
             </div>
         </div>
 
-        <a class="lb-link" th:href="${leaderboardUrl}" target="_blank">
-            <div class="lb-left">
-                <div class="lb-icon">🏆</div>
-                <div>
-                    <h4>查看全服英雄榜</h4>
-                    <p>每 30 秒自动刷新 · 实时更新</p>
-                </div>
-            </div>
-            <div class="arrow">→</div>
-        </a>
+        <div class="lb-link-wrap">
+            <a class="nes-container lb-link" th:href="${leaderboardUrl}" target="_blank">
+                <div class="lb-left">
+                    <span class="lb-icon">🏆</span>
+                    <div>
+                        <h4>查看全服英雄榜</h4>
+                        <p>每 30 秒自动刷新 · 实时更新</p>
+                    </div>
+                <span class="lb-arrow">→</span>
+            </a>
+        </div>
 
-        <section id="mini-lb">
-            <div class="mini-lb-grid">
-                <div class="mini-board lv1">
-                    <div class="mini-board-hd">🗝️ 第一章 TOP 3</div>
-                    <div class="mini-board-body" id="mini-user-body">
-                        <div class="mini-empty">加载中…</div>
-                    </div>
-                    <div class="mini-foot" id="mini-user-ts"></div>
+        <div class="mini-lb-grid">
+            <div class="nes-container with-title">
+                <p class="title mini-board-title">🗝️ 第一章 TOP 3</p>
+                <div id="mini-user-body">
+                    <div class="mini-empty">加载中…</div>
                 </div>
-                <div class="mini-board lv2">
-                    <div class="mini-board-hd">👑 第二章 TOP 3</div>
-                    <div class="mini-board-body" id="mini-root-body">
-                        <div class="mini-empty">加载中…</div>
-                    </div>
-                    <div class="mini-foot" id="mini-root-ts"></div>
-                </div>
+                <div class="mini-foot" id="mini-user-ts"></div>
             </div>
-        </section>
+            <div class="nes-container with-title">
+                <p class="title mini-board-title">👑 第二章 TOP 3</p>
+                <div id="mini-root-body">
+                    <div class="mini-empty">加载中…</div>
+                </div>
+                <div class="mini-foot" id="mini-root-ts"></div>
+            </div>
+        </div>
     </main>
 </body>
 
