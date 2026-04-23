@@ -136,6 +136,43 @@ PwnKit 允许任意无权限本地用户提升至 `root`。
 
 ---
 
+## Cloudflare 静态归档（关靶场前导出当前排行榜）
+
+如果你准备关闭靶场，只保留 Cloudflare 静态页面，可以在关停前导出一次最终榜单快照。
+
+### 1) 导出当前排行榜快照
+
+在仓库根目录执行：
+
+```bash
+python leaderboard/export_cf_snapshot.py
+```
+
+默认会从 `http://localhost:80/api/leaderboard` 拉取实时榜单，并写入：
+
+- `leaderboard/cf-static/leaderboard.json`
+
+可选环境变量：
+
+- `LEADERBOARD_API_URL`：自定义排行榜 API 地址
+- `CF_STATIC_DIR`：自定义静态文件输出目录
+
+示例：
+
+```bash
+LEADERBOARD_API_URL=http://YOUR_HOST:80/api/leaderboard \
+CF_STATIC_DIR=/tmp/cf-static \
+python leaderboard/export_cf_snapshot.py
+```
+
+### 2) 上传静态页面到 Cloudflare Pages
+
+将 `leaderboard/cf-static/` 目录整体作为静态站点发布目录上传（其中 `index.html` + `leaderboard.json` 必须同时存在）。
+
+页面会展示“最终快照”数据，不再依赖后端容器或靶场服务。
+
+---
+
 ## 目录结构
 
 ```
@@ -160,7 +197,11 @@ PwnKit 允许任意无权限本地用户提升至 `root`。
 └── leaderboard/                  # 排行榜服务
     ├── Dockerfile
     ├── app.py                    # Flask API + 文件读取器
+    ├── export_cf_snapshot.py     # 导出当前榜单为 Cloudflare 静态快照
     ├── requirements.txt
+    ├── cf-static/                # Cloudflare Pages 静态发布目录
+    │   ├── index.html
+    │   └── leaderboard.json
     └── templates/
         └── index.html            # 双榜排行榜界面
 ```

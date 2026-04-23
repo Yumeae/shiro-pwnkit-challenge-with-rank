@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MazeQuest 排行榜（静态归档）</title>
+    <link rel="preconnect" href="https://fonts.loli.net" />
+    <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+    <link href="https://fonts.loli.net/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <style>
+        * { box-sizing: border-box; }
+        body { background:#f8f8f8; font-family:'Press Start 2P',monospace; color:#212529; min-height:100vh; margin:0; }
+        nav { background:#fff; border-bottom:4px solid #212529; padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+        .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; color:#212529; font-size:.75rem; white-space:nowrap; }
+        .nav-state { font-size:.55rem; color:#e76e00; }
+        .page { max-width:1100px; margin:0 auto; padding:32px 20px 64px; }
+        .hero { text-align:center; margin-bottom:40px; }
+        .hero h1 { font-size:1.05rem; color:#e76e00; margin-bottom:12px; text-shadow:4px 4px #ccc; }
+        .hero p { font-size:.6rem; color:#555; line-height:1.8; }
+        .stats-row { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin-bottom:40px; }
+        .stat-box { text-align:center; min-width:140px; padding:16px; }
+        .stat-box .val { font-size:1.6rem; display:block; margin-bottom:8px; }
+        .stat-box .lbl { font-size:.52rem; color:#555; }
+        .val-blue{color:#209cee}.val-gold{color:#e76e00}.val-green{color:#209c00}
+        .boards { display:grid; grid-template-columns:repeat(auto-fit,minmax(440px,1fr)); gap:32px; }
+        .board-count { font-size:.52rem; color:#209c00; margin-left:auto; }
+        .nes-table-wrap { overflow-x:auto; }
+        .board-table { width:100%; border-collapse:collapse; font-size:.58rem; }
+        .board-table thead th { padding:8px 12px; text-align:left; color:#555; border-bottom:4px solid #212529; white-space:nowrap; }
+        .board-table tbody td { padding:8px 12px; border-bottom:2px solid #ddd; vertical-align:middle; }
+        .board-table tbody td:last-child, .board-table thead th:last-child { text-align:right; }
+        .board-table tbody tr:last-child td { border-bottom:none; }
+        .board-table tbody tr:hover { background: rgba(0,0,0,.04); }
+        .medal { font-size:.9rem; }
+        .rank-n { color:#666; }
+        .td-time { font-family:monospace; color:#555; font-size:.55rem; }
+        .empty { text-align:center; padding:32px 20px; color:#666; }
+        .empty .empty-emoji { font-size:2rem; display:block; margin-bottom:12px; }
+        .empty h3 { font-size:.6rem; margin-bottom:8px; color:#444; }
+        .empty p { font-size:.52rem; line-height:1.8; }
+        .footer-note { margin-top:32px; text-align:center; font-size:.5rem; color:#666; line-height:1.8; }
+        @media (max-width: 900px) { .boards { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { .hero h1 { font-size: .8rem; } nav { padding: 10px 14px; } .page { padding:20px 12px 48px; } }
+    </style>
+</head>
+<body>
+<nav>
+    <a class="nav-brand" href="#">
+        <span>🗺️ MazeQuest 排行榜</span>
+    </a>
+    <div class="nav-state">📦 静态归档模式（靶场已关闭）</div>
+</nav>
+
+<div class="page">
+    <div class="hero">
+        <h1>🏆 全服英雄榜（最终快照）</h1>
+        <p>该页面由 Cloudflare 静态托管，展示关靶场前最后一次导出的排行榜数据。</p>
+    </div>
+
+    <div class="stats-row">
+        <div class="nes-container stat-box"><span class="val val-blue" id="stat-user">—</span><span class="lbl">🗝️ 第一章通关</span></div>
+        <div class="nes-container stat-box"><span class="val val-gold" id="stat-root">—</span><span class="lbl">👑 第二章通关</span></div>
+        <div class="nes-container stat-box"><span class="val val-green" id="stat-both">—</span><span class="lbl">🌟 全章节通关</span></div>
+    </div>
+
+    <div class="boards">
+        <div class="nes-container with-title">
+            <p class="title">🗝️ 第一章英雄榜</p>
+            <div class="board-count" id="user-badge">0 人通关</div>
+            <div class="nes-table-wrap">
+                <table class="board-table">
+                    <thead><tr><th>排名</th><th>用户名</th><th>通关时间</th></tr></thead>
+                    <tbody id="user-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="nes-container with-title">
+            <p class="title">👑 第二章英雄榜</p>
+            <div class="board-count" id="root-badge">0 人通关</div>
+            <div class="nes-table-wrap">
+                <table class="board-table">
+                    <thead><tr><th>排名</th><th>用户名</th><th>通关时间</th></tr></thead>
+                    <tbody id="root-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        <div id="snapshot-ts">快照时间：—</div>
+        <div id="snapshot-source">数据来源：—</div>
+    </div>
+</div>
+
+<script>
+    const MEDALS = ['🥇','🥈','🥉'];
+
+    function esc(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function emptyRow(isUser) {
+        return `<tr><td colspan="3"><div class="empty">
+            <span class="empty-emoji">${isUser ? '🗺️' : '🏔️'}</span>
+            <h3>暂无通关记录</h3>
+            <p>本次快照中暂无${isUser ? '第一章' : '第二章'}通关数据</p>
+        </div></td></tr>`;
+    }
+
+    function renderBoard(tbodyId, entries) {
+        const tbody = document.getElementById(tbodyId);
+        const isUser = tbodyId === 'user-body';
+        if (!entries || entries.length === 0) {
+            tbody.innerHTML = emptyRow(isUser);
+            return;
+        }
+
+        tbody.innerHTML = entries.map((e, i) => `
+            <tr>
+                <td style="width:56px">${i < 3 ? `<span class="medal">${MEDALS[i]}</span>` : `<span class="rank-n">${e.rank}</span>`}</td>
+                <td>${esc(e.name)}</td>
+                <td class="td-time">${esc(e.time)}</td>
+            </tr>`).join('');
+    }
+
+    async function loadSnapshot() {
+        const resp = await fetch('./leaderboard.json', { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        return await resp.json();
+    }
+
+    async function init() {
+        try {
+            const data = await loadSnapshot();
+            const users = data.user || [];
+            const roots = data.root || [];
+
+            renderBoard('user-body', users);
+            renderBoard('root-body', roots);
+
+            const rootSet = new Set(roots.map(e => e.name));
+            const both = users.filter(e => rootSet.has(e.name)).length;
+
+            document.getElementById('stat-user').textContent = users.length;
+            document.getElementById('stat-root').textContent = roots.length;
+            document.getElementById('stat-both').textContent = both;
+            document.getElementById('user-badge').textContent = users.length + ' 人通关';
+            document.getElementById('root-badge').textContent = roots.length + ' 人通关';
+            document.getElementById('snapshot-ts').textContent = '快照时间：' + (data.generated_at || '未知');
+            document.getElementById('snapshot-source').textContent = '数据来源：' + (data.source || '未知');
+        } catch (e) {
+            console.error(e);
+            document.getElementById('user-body').innerHTML = emptyRow(true);
+            document.getElementById('root-body').innerHTML = emptyRow(false);
+            document.getElementById('snapshot-ts').textContent = '快照时间：读取失败';
+            document.getElementById('snapshot-source').textContent = '请检查 leaderboard.json 是否已上传';
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
