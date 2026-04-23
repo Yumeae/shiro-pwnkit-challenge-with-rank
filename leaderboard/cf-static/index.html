@@ -126,7 +126,7 @@
     }
 
     async function loadSnapshot() {
-        const resp = await fetch('./leaderboard.json', { cache: 'no-store' });
+        const resp = await fetch('./leaderboard.json');
         if (!resp.ok) throw new Error('HTTP ' + resp.status);
         return await resp.json();
     }

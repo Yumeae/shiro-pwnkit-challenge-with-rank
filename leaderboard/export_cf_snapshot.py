@@ -20,7 +20,7 @@ def main() -> int:
         return 1
 
     snapshot = {
-        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
         "source": api_url,
         "user": payload.get("user", []),
         "root": payload.get("root", []),
