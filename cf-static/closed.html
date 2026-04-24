@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>迷境探索 · MazeQuest — 挑战已关闭</title>
+    <link rel="preconnect" href="https://fonts.loli.net" />
+    <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+    <link href="https://fonts.loli.net/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: #f8f8f8;
+            font-family: 'Press Start 2P', monospace;
+            color: #212529;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* ── Nav ── */
+        nav {
+            background-color: #fff;
+            border-bottom: 4px solid #212529;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #212529;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+        .nav-brand-icon { font-size: 1.2rem; }
+
+        .nav-btn { font-size: 0.55rem; }
+
+        /* ── Page ── */
+        .page {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 64px 20px 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* ── Closed card ── */
+        .closed-card {
+            width: 100%;
+            text-align: center;
+        }
+
+        .closed-icon {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 24px;
+        }
+
+        .closed-title {
+            font-size: 1.1rem;
+            color: #e76e00;
+            margin-bottom: 16px;
+            text-shadow: 4px 4px #ccc;
+        }
+
+        .closed-sub {
+            font-size: 0.62rem;
+            color: #555;
+            line-height: 2;
+            margin-bottom: 0;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            width: 100%;
+            border: none;
+            border-top: 4px solid #212529;
+        }
+
+        /* ── Info list ── */
+        .info-list {
+            width: 100%;
+        }
+        .info-list .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 2px solid #ddd;
+            font-size: 0.58rem;
+        }
+        .info-list .info-row:last-child { border-bottom: none; }
+        .info-key { color: #555; white-space: nowrap; }
+        .info-val { color: #212529; text-align: right; word-break: break-all; }
+
+        /* ── Buttons ── */
+        .btn-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn-row .nes-btn { font-size: 0.55rem; }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .closed-title { font-size: 0.85rem; }
+            nav { padding: 10px 14px; }
+            .page { padding: 40px 12px 60px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+    <a class="nav-brand" href="./index.html">
+        <span class="nav-brand-icon">🗺️</span>
+        <span>MazeQuest 排行榜</span>
+    </a>
+    <a class="nes-btn nav-btn" href="./index.html">查看排行榜</a>
+</nav>
+
+<div class="page">
+
+    <!-- Closed card -->
+    <div class="nes-container with-title closed-card">
+        <p class="title">⚠️ 挑战状态</p>
+        <span class="closed-icon">🔒</span>
+        <h1 class="closed-title">挑战已关闭</h1>
+        <p class="closed-sub">
+            本次靶场活动已结束，感谢所有参与者！<br />
+            排行榜数据已永久保留，欢迎在历史榜单中查阅最终成绩。
+        </p>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Info list -->
+    <div class="nes-container with-title info-list">
+        <p class="title">📋 挑战信息</p>
+        <div class="info-row">
+            <span class="info-key">靶场名称</span>
+            <span class="info-val">MazeQuest · Shiro + PwnKit</span>
+        </div>
+        <div class="info-row">
+            <span class="info-key">涉及漏洞</span>
+            <span class="info-val">CVE-2016-4437 · CVE-2021-4034</span>
+        </div>
+        <div class="info-row">
+            <span class="info-key">第一章目标</span>
+            <span class="info-val">Shiro RememberMe RCE → 获取用户 Shell</span>
+        </div>
+        <div class="info-row">
+            <span class="info-key">第二章目标</span>
+            <span class="info-val">PwnKit 提权 → 获取 Root Shell</span>
+        </div>
+        <div class="info-row">
+            <span class="info-key">当前状态</span>
+            <span class="info-val" style="color:#e76e00;">🔒 已关闭</span>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-row">
+        <a class="nes-btn is-primary" href="./index.html">🏆 查看最终排行榜</a>
+    </div>
+
+</div><!-- /.page -->
+
+</body>
+</html>
