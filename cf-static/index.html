@@ -222,6 +222,56 @@
             padding: 8px 4px 0;
         }
 
+        /* ── About ── */
+        .about-section {
+            margin-bottom: 40px;
+        }
+        .about-section .about-story {
+            font-size: 0.6rem;
+            color: #444;
+            line-height: 2.2;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .chapter-card {
+            width: 100%;
+        }
+        .chapter-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .chapter-icon { font-size: 1.4rem; }
+        .chapter-name {
+            font-size: 0.65rem;
+            color: #212529;
+        }
+        .chapter-cve {
+            font-size: 0.48rem;
+            color: #e76e00;
+            margin-top: 2px;
+        }
+        .chapter-desc {
+            font-size: 0.56rem;
+            color: #555;
+            line-height: 2;
+            margin-bottom: 12px;
+        }
+        .chapter-tag {
+            display: inline-block;
+            font-size: 0.45rem;
+            background: #212529;
+            color: #fff;
+            padding: 3px 8px;
+            margin: 2px 3px 2px 0;
+        }
+
         /* ── Responsive ── */
         @media (max-width: 900px) {
             .boards { grid-template-columns: 1fr; }
@@ -255,6 +305,56 @@
     <div class="hero">
         <h1>🏆 全服英雄榜 🏆</h1>
         <p>完成关卡后你的名字将铭刻于此，榜单每 30 秒自动刷新。</p>
+    </div>
+
+    <!-- About -->
+    <div class="about-section">
+        <div class="nes-container with-title">
+            <p class="title">🎮 关于本挑战</p>
+            <p class="about-story">
+                迷境探索 · MazeQuest 是一场以真实 CVE 漏洞为核心的双章节 CTF 靶场。<br />
+                你将扮演一名深入迷雾之地的探索者，从渗透 Web 应用到提权夺取系统控制权，<br />
+                每一步都是对真实攻击技术的实战演练。完成挑战，铭刻传说！
+            </p>
+            <div class="chapter-grid">
+                <div class="nes-container chapter-card">
+                    <div class="chapter-header">
+                        <span class="chapter-icon">🗝️</span>
+                        <div>
+                            <div class="chapter-name">第一章 · 迷雾之门</div>
+                            <div class="chapter-cve">CVE-2016-4437 · Apache Shiro</div>
+                        </div>
+                    </div>
+                    <p class="chapter-desc">
+                        目标服务运行着存在 RememberMe 反序列化漏洞的 Apache Shiro 应用。
+                        选手需构造特制 Cookie 触发 RCE，在目标机器上取得普通用户 Shell，
+                        读取 <code>flag_user.txt</code> 完成本章。
+                    </p>
+                    <span class="chapter-tag">反序列化</span>
+                    <span class="chapter-tag">Web 渗透</span>
+                    <span class="chapter-tag">RCE</span>
+                    <span class="chapter-tag">Java</span>
+                </div>
+                <div class="nes-container chapter-card">
+                    <div class="chapter-header">
+                        <span class="chapter-icon">👑</span>
+                        <div>
+                            <div class="chapter-name">第二章 · 巅峰之路</div>
+                            <div class="chapter-cve">CVE-2021-4034 · PwnKit</div>
+                        </div>
+                    </div>
+                    <p class="chapter-desc">
+                        已获得用户权限的探索者需要突破最后壁垒。
+                        利用 Linux polkit 提权漏洞 PwnKit，将权限提升至 root，
+                        读取 <code>flag_root.txt</code> 完成本章，登顶传奇巅峰。
+                    </p>
+                    <span class="chapter-tag">本地提权</span>
+                    <span class="chapter-tag">Linux</span>
+                    <span class="chapter-tag">polkit</span>
+                    <span class="chapter-tag">ELF</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Stats -->
