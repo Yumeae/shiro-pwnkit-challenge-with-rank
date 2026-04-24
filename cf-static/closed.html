@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>迷境探索 · MazeQuest — 挑战已关闭</title>
+    <link rel="preconnect" href="https://fonts.loli.net" />
+    <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+    <link href="https://fonts.loli.net/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: #f8f8f8;
+            font-family: 'Press Start 2P', monospace;
+            color: #212529;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* ── Nav ── */
+        nav {
+            background-color: #fff;
+            border-bottom: 4px solid #212529;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #212529;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+        .nav-brand-icon { font-size: 1.2rem; }
+
+        .nav-btn { font-size: 0.55rem; }
+
+        /* ── Page ── */
+        .page {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 64px 20px 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* ── Closed card ── */
+        .closed-card {
+            width: 100%;
+            text-align: center;
+        }
+
+        .closed-icon {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 24px;
+        }
+
+        .closed-title {
+            font-size: 1.1rem;
+            color: #e76e00;
+            margin-bottom: 16px;
+            text-shadow: 4px 4px #ccc;
+        }
+
+        .closed-sub {
+            font-size: 0.62rem;
+            color: #555;
+            line-height: 2;
+            margin-bottom: 0;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            width: 100%;
+            border: none;
+            border-top: 4px solid #212529;
+        }
+
+        /* ── Info list ── */
+        .info-list {
+            width: 100%;
+        }
+        .info-list .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 2px solid #ddd;
+            font-size: 0.58rem;
+        }
+        .info-list .info-row:last-child { border-bottom: none; }
+        .info-key { color: #555; white-space: nowrap; }
+        .info-val { color: #212529; text-align: right; word-break: break-all; }
+
+        /* ── Buttons ── */
+        .btn-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn-row .nes-btn { font-size: 0.55rem; }
+
+        /* ── About ── */
+        .about-story {
+            font-size: 0.6rem;
+            color: #444;
+            line-height: 2.2;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .chapter-card { width: 100%; }
+        .chapter-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .chapter-icon { font-size: 1.4rem; }
+        .chapter-name { font-size: 0.65rem; color: #212529; }
+        .chapter-cve  { font-size: 0.48rem; color: #e76e00; margin-top: 2px; }
+        .chapter-desc {
+            font-size: 0.56rem;
+            color: #555;
+            line-height: 2;
+            margin-bottom: 12px;
+        }
+        .chapter-tag {
+            display: inline-block;
+            font-size: 0.45rem;
+            background: #212529;
+            color: #fff;
+            padding: 3px 8px;
+            margin: 2px 3px 2px 0;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .closed-title { font-size: 0.85rem; }
+            nav { padding: 10px 14px; }
+            .page { padding: 40px 12px 60px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+    <a class="nav-brand" href="./index.html">
+        <span class="nav-brand-icon">🗺️</span>
+        <span>MazeQuest 排行榜</span>
+    </a>
+    <a class="nes-btn nav-btn" href="./index.html">查看排行榜</a>
+</nav>
+
+<div class="page">
+
+    <!-- Closed card -->
+    <div class="nes-container with-title closed-card">
+        <p class="title">⚠️ 挑战状态</p>
+        <span class="closed-icon">🎭</span>
+        <h1 class="closed-title">帷幕已落下</h1>
+        <p class="closed-sub">
+            挑战者啊——<br />
+            这里的战役已悄然落幕，迷雾散去，传说留存。<br />
+            感谢每一位踏入迷境、挥剑而战的勇者，<br />
+            你们的名字已永久铭刻于英雄榜之上。<br /><br />
+            这不是终点，而是下一段旅程的序章。<br />
+            期待与你在下一场挑战中再度相遇！⚔️
+        </p>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Info list -->
+    <div class="nes-container with-title info-list">
+        <p class="title">📋 挑战信息</p>
+        <div class="info-row">
+            <span class="info-key">靶场名称</span>
+            <span class="info-val">MazeQuest · Shiro + PwnKit</span>
+        </div>
+        <div class="info-row">
+            <span class="info-key">涉及漏洞</span>
+            <span class="info-val">CVE-2016-4437 · CVE-2021-4034</span>
+        </div>
+        <div class="info-row">
+            <span class="info-key">第一章目标</span>
+            <span class="info-val">Shiro RememberMe RCE → 获取用户 Shell</span>
+        </div>
+        <div class="info-row">
+            <span class="info-key">第二章目标</span>
+            <span class="info-val">PwnKit 提权 → 获取 Root Shell</span>
+        </div>
+        <div class="info-row">
+            <span class="info-key">当前状态</span>
+            <span class="info-val" style="color:#e76e00;">🔒 已关闭</span>
+        </div>
+    </div>
+
+    <!-- About -->
+    <div class="nes-container with-title" style="width:100%">
+        <p class="title">🎮 关于本挑战</p>
+        <p class="about-story">
+            迷境探索 · MazeQuest 是一场以真实 CVE 漏洞为核心的双章节 CTF 靶场。<br />
+            你将扮演一名深入迷雾之地的探索者，从渗透 Web 应用到提权夺取系统控制权，<br />
+            每一步都是对真实攻击技术的实战演练。完成挑战，铭刻传说！
+        </p>
+        <div class="chapter-grid">
+            <div class="nes-container chapter-card">
+                <div class="chapter-header">
+                    <span class="chapter-icon">🗝️</span>
+                    <div>
+                        <div class="chapter-name">第一章 · 迷雾之门</div>
+                        <div class="chapter-cve">CVE-2016-4437 · Apache Shiro</div>
+                    </div>
+                </div>
+                <p class="chapter-desc">
+                    目标服务运行着存在 RememberMe 反序列化漏洞的 Apache Shiro 应用。
+                    选手需构造特制 Cookie 触发 RCE，在目标机器上取得普通用户 Shell，
+                    读取 <code>flag_user.txt</code> 完成本章。
+                </p>
+                <span class="chapter-tag">反序列化</span>
+                <span class="chapter-tag">Web 渗透</span>
+                <span class="chapter-tag">RCE</span>
+                <span class="chapter-tag">Java</span>
+            </div>
+            <div class="nes-container chapter-card">
+                <div class="chapter-header">
+                    <span class="chapter-icon">👑</span>
+                    <div>
+                        <div class="chapter-name">第二章 · 巅峰之路</div>
+                        <div class="chapter-cve">CVE-2021-4034 · PwnKit</div>
+                    </div>
+                </div>
+                <p class="chapter-desc">
+                    已获得用户权限的探索者需要突破最后壁垒。
+                    利用 Linux polkit 提权漏洞 PwnKit，将权限提升至 root，
+                    读取 <code>flag_root.txt</code> 完成本章，登顶传奇巅峰。
+                </p>
+                <span class="chapter-tag">本地提权</span>
+                <span class="chapter-tag">Linux</span>
+                <span class="chapter-tag">polkit</span>
+                <span class="chapter-tag">ELF</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-row">
+        <a class="nes-btn is-primary" href="./index.html">🏆 查看最终排行榜</a>
+        <a class="nes-btn is-success" href="https://github.com/Yumeae/shiro-pwnkit-challenge-with-rank" target="_blank" rel="noopener">🔁 复现本挑战</a>
+    </div>
+
+</div><!-- /.page -->
+
+</body>
+</html>

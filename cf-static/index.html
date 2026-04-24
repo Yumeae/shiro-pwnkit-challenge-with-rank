@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>迷境探索 · MazeQuest — 全服排行榜</title>
+    <link rel="preconnect" href="https://fonts.loli.net" />
+    <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+    <link href="https://fonts.loli.net/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: #f8f8f8;
+            font-family: 'Press Start 2P', monospace;
+            color: #212529;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* ── Nav ── */
+        nav {
+            background-color: #fff;
+            border-bottom: 4px solid #212529;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #212529;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+        .nav-brand-icon { font-size: 1.2rem; }
+
+        .nav-live {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.6rem;
+            color: #209c00;
+            white-space: nowrap;
+        }
+        .live-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #209c00;
+            animation: blink 1.2s step-start infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0; }
+        }
+
+        .nav-btn {
+            font-size: 0.55rem;
+        }
+
+        /* ── Page ── */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 20px 64px;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 1.1rem;
+            color: #e76e00;
+            margin-bottom: 12px;
+            text-shadow: 4px 4px #ccc;
+        }
+        .hero p {
+            font-size: 0.65rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        /* ── Stats ── */
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        .stat-box {
+            text-align: center;
+            min-width: 140px;
+            padding: 16px;
+        }
+        .stat-box .val {
+            font-size: 1.6rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .stat-box .lbl {
+            font-size: 0.52rem;
+            color: #555;
+        }
+        .val-blue   { color: #209cee; }
+        .val-gold   { color: #e76e00; }
+        .val-green  { color: #209c00; }
+
+        /* ── Boards ── */
+        .boards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+            gap: 32px;
+        }
+
+        .board-title {
+            font-size: 0.65rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .board-count {
+            font-size: 0.52rem;
+            color: #209c00;
+            margin-left: auto;
+        }
+
+        /* ── Table ── */
+        .nes-table-wrap {
+            overflow-x: auto;
+        }
+        .board-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.58rem;
+        }
+        .board-table thead th {
+            padding: 8px 12px;
+            text-align: left;
+            color: #555;
+            border-bottom: 4px solid #212529;
+            white-space: nowrap;
+        }
+        .board-table thead th:last-child { text-align: right; }
+        .board-table tbody td {
+            padding: 8px 12px;
+            border-bottom: 2px solid #ddd;
+            vertical-align: middle;
+        }
+        .board-table tbody td:last-child { text-align: right; }
+        .board-table tbody tr:last-child td { border-bottom: none; }
+        .board-table tbody tr:hover { background: rgba(0,0,0,0.04); }
+
+        .medal { font-size: 0.9rem; }
+        .rank-n { color: #666; }
+
+        .uname { color: #212529; }
+
+        .td-time {
+            font-family: monospace;
+            color: #555;
+            font-size: 0.55rem;
+        }
+
+        /* ── Podium ── */
+        .podium-strip {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px 0 4px;
+        }
+        .podium-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-align: center;
+        }
+        .podium-medal { font-size: 1.2rem; }
+        .podium-name {
+            font-size: 0.5rem;
+            color: #212529;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .podium-time {
+            font-size: 0.42rem;
+            color: #555;
+            font-family: monospace;
+        }
+
+        /* ── Empty ── */
+        .empty {
+            text-align: center;
+            padding: 32px 20px;
+            color: #666;
+        }
+        .empty .empty-emoji { font-size: 2rem; display: block; margin-bottom: 12px; }
+        .empty h3 { font-size: 0.6rem; margin-bottom: 8px; color: #444; }
+        .empty p { font-size: 0.52rem; line-height: 1.8; }
+
+        /* ── Board footer ── */
+        .board-foot {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.5rem;
+            color: #888;
+            padding: 8px 4px 0;
+        }
+
+        /* ── About ── */
+        .about-section {
+            margin-bottom: 40px;
+        }
+        .about-section .about-story {
+            font-size: 0.6rem;
+            color: #444;
+            line-height: 2.2;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .chapter-card {
+            width: 100%;
+        }
+        .chapter-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .chapter-icon { font-size: 1.4rem; }
+        .chapter-name {
+            font-size: 0.65rem;
+            color: #212529;
+        }
+        .chapter-cve {
+            font-size: 0.48rem;
+            color: #e76e00;
+            margin-top: 2px;
+        }
+        .chapter-desc {
+            font-size: 0.56rem;
+            color: #555;
+            line-height: 2;
+            margin-bottom: 12px;
+        }
+        .chapter-tag {
+            display: inline-block;
+            font-size: 0.45rem;
+            background: #212529;
+            color: #fff;
+            padding: 3px 8px;
+            margin: 2px 3px 2px 0;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .boards { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 0.8rem; }
+            nav { padding: 10px 14px; }
+            .page { padding: 20px 12px 48px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+    <a class="nav-brand" href="#">
+        <span class="nav-brand-icon">🗺️</span>
+        <span>MazeQuest 排行榜</span>
+    </a>
+    <div class="nav-live">
+        <span class="live-dot"></span>
+        <span>LIVE</span>
+        <span id="nav-time"></span>
+    </div>
+    <a class="nes-btn is-primary nav-btn" href="./closed.html">进入挑战</a>
+</nav>
+
+<div class="page">
+
+    <!-- Hero -->
+    <div class="hero">
+        <h1>🏆 全服英雄榜 🏆</h1>
+        <p>完成关卡后你的名字将铭刻于此，榜单每 30 秒自动刷新。</p>
+    </div>
+
+    <!-- About -->
+    <div class="about-section">
+        <div class="nes-container with-title">
+            <p class="title">🎮 关于本挑战</p>
+            <p class="about-story">
+                迷境探索 · MazeQuest 是一场以真实 CVE 漏洞为核心的双章节 CTF 靶场。<br />
+                你将扮演一名深入迷雾之地的探索者，从渗透 Web 应用到提权夺取系统控制权，<br />
+                每一步都是对真实攻击技术的实战演练。完成挑战，铭刻传说！
+            </p>
+            <div class="chapter-grid">
+                <div class="nes-container chapter-card">
+                    <div class="chapter-header">
+                        <span class="chapter-icon">🗝️</span>
+                        <div>
+                            <div class="chapter-name">第一章 · 迷雾之门</div>
+                            <div class="chapter-cve">CVE-2016-4437 · Apache Shiro</div>
+                        </div>
+                    </div>
+                    <p class="chapter-desc">
+                        目标服务运行着存在 RememberMe 反序列化漏洞的 Apache Shiro 应用。
+                        选手需构造特制 Cookie 触发 RCE，在目标机器上取得普通用户 Shell，
+                        读取 <code>flag_user.txt</code> 完成本章。
+                    </p>
+                    <span class="chapter-tag">反序列化</span>
+                    <span class="chapter-tag">Web 渗透</span>
+                    <span class="chapter-tag">RCE</span>
+                    <span class="chapter-tag">Java</span>
+                </div>
+                <div class="nes-container chapter-card">
+                    <div class="chapter-header">
+                        <span class="chapter-icon">👑</span>
+                        <div>
+                            <div class="chapter-name">第二章 · 巅峰之路</div>
+                            <div class="chapter-cve">CVE-2021-4034 · PwnKit</div>
+                        </div>
+                    </div>
+                    <p class="chapter-desc">
+                        已获得用户权限的探索者需要突破最后壁垒。
+                        利用 Linux polkit 提权漏洞 PwnKit，将权限提升至 root，
+                        读取 <code>flag_root.txt</code> 完成本章，登顶传奇巅峰。
+                    </p>
+                    <span class="chapter-tag">本地提权</span>
+                    <span class="chapter-tag">Linux</span>
+                    <span class="chapter-tag">polkit</span>
+                    <span class="chapter-tag">ELF</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="nes-container stat-box">
+            <span class="val val-blue" id="stat-user">—</span>
+            <span class="lbl">🗝️ 第一章通关</span>
+        </div>
+        <div class="nes-container stat-box">
+            <span class="val val-gold" id="stat-root">—</span>
+            <span class="lbl">👑 第二章通关</span>
+        </div>
+        <div class="nes-container stat-box">
+            <span class="val val-green" id="stat-both">—</span>
+            <span class="lbl">🌟 全章节通关</span>
+        </div>
+    </div>
+
+    <!-- Boards -->
+    <div class="boards">
+
+        <!-- Board 1 -->
+        <div class="nes-container with-title">
+            <p class="title">🗝️ 第一章英雄榜</p>
+            <div class="board-count" id="user-badge">0 人通关</div>
+            <div class="podium-strip" id="user-podium" style="display:none"></div>
+            <div class="nes-table-wrap">
+                <table class="board-table">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>用户名</th>
+                            <th>通关时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-body">
+                        <tr><td colspan="3"><div class="empty">
+                            <span class="empty-emoji">🗺️</span>
+                            <h3>暂无通关记录</h3>
+                            <p>成为第一个完成第一章的勇者！</p>
+                        </div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="board-foot">
+                <span>每 30 秒自动刷新</span>
+                <span id="user-ts"></span>
+            </div>
+        </div>
+
+        <!-- Board 2 -->
+        <div class="nes-container with-title">
+            <p class="title">👑 第二章英雄榜</p>
+            <div class="board-count" id="root-badge">0 人通关</div>
+            <div class="podium-strip" id="root-podium" style="display:none"></div>
+            <div class="nes-table-wrap">
+                <table class="board-table">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>用户名</th>
+                            <th>通关时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="root-body">
+                        <tr><td colspan="3"><div class="empty">
+                            <span class="empty-emoji">🏔️</span>
+                            <h3>暂无通关记录</h3>
+                            <p>成为第一个登顶传奇巅峰的勇者！</p>
+                        </div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="board-foot">
+                <span>每 30 秒自动刷新</span>
+                <span id="root-ts"></span>
+            </div>
+        </div>
+
+    </div><!-- /.boards -->
+
+</div><!-- /.page -->
+
+<script>
+    const MEDALS  = ['🥇', '🥈', '🥉'];
+    const ROW_CLS = ['r1', 'r2', 'r3'];
+
+    function esc(s) {
+        return String(s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function renderPodium(podiumId, entries) {
+        const el = document.getElementById(podiumId);
+        if (!entries || entries.length === 0) {
+            el.style.display = 'none';
+            return;
+        }
+        const top = entries.slice(0, Math.min(3, entries.length));
+        el.innerHTML = top.map((e, i) => `
+            <div class="podium-item">
+                <div class="podium-medal">${MEDALS[i]}</div>
+                <div class="podium-name" title="${esc(e.name)}">${esc(e.name)}</div>
+                <div class="podium-time">${esc(e.time)}</div>
+            </div>`).join('');
+        el.style.display = 'flex';
+    }
+
+    function renderBoard(tbodyId, entries) {
+        const tbody  = document.getElementById(tbodyId);
+        const isUser = tbodyId === 'user-body';
+        if (!entries || entries.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3"><div class="empty">
+                <span class="empty-emoji">${isUser ? '🗺️' : '🏔️'}</span>
+                <h3>暂无通关记录</h3>
+                <p>成为第一个完成${isUser ? '第一章' : '第二章'}的勇者！</p>
+            </div></td></tr>`;
+            return;
+        }
+        tbody.innerHTML = entries.map((e, i) => `
+            <tr>
+                <td style="width:56px">${i < 3
+                    ? `<span class="medal">${MEDALS[i]}</span>`
+                    : `<span class="rank-n">${e.rank}</span>`
+                }</td>
+                <td><span class="uname">${esc(e.name)}</span></td>
+                <td class="td-time">${esc(e.time)}</td>
+            </tr>`).join('');
+    }
+
+    function nowStr() {
+        return new Date().toLocaleTimeString('zh-CN', { hour12: false });
+    }
+
+    async function refresh() {
+        try {
+            const resp = await fetch('./leaderboard.json', { cache: 'no-store' });
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const data = await resp.json();
+
+            renderPodium('user-podium', data.user);
+            renderPodium('root-podium', data.root);
+            renderBoard('user-body', data.user);
+            renderBoard('root-body', data.root);
+
+            const uLen    = (data.user || []).length;
+            const rLen    = (data.root || []).length;
+            const rootSet = new Set((data.root || []).map(e => e.name));
+            const both    = (data.user || []).filter(e => rootSet.has(e.name)).length;
+
+            document.getElementById('stat-user').textContent = uLen;
+            document.getElementById('stat-root').textContent = rLen;
+            document.getElementById('stat-both').textContent = both;
+            document.getElementById('user-badge').textContent = uLen + ' 人通关';
+            document.getElementById('root-badge').textContent = rLen + ' 人通关';
+
+            const t = nowStr();
+            document.getElementById('nav-time').textContent = t;
+            document.getElementById('user-ts').textContent  = '更新于 ' + t;
+            document.getElementById('root-ts').textContent  = '更新于 ' + t;
+        } catch (err) {
+            console.error('Leaderboard fetch error:', err);
+        }
+    }
+
+    refresh();
+    setInterval(refresh, 30000);
+</script>
+</body>
+</html>

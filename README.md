@@ -99,6 +99,25 @@ services:
 
 ---
 
+## Cloudflare 静态保留排行榜（关闭靶场后使用）
+
+如果你准备关闭靶场，仅保留当前排行榜页面，可在靶场下线前导出一次快照，并部署 `cf-static/` 到 Cloudflare Pages。
+
+1. 导出当前排行榜快照（会覆盖 `cf-static/leaderboard.json`）：
+
+```bash
+python3 leaderboard/export_snapshot.py --source http://39.106.85.149/api/leaderboard
+```
+
+2. 将 `cf-static/` 目录作为静态站点发布到 Cloudflare Pages（或任意静态托管）。
+
+说明：
+- `cf-static/index.html` 保持与原排行榜页面相同的样式与文案；
+- 页面数据改为读取同目录下的 `leaderboard.json`；
+- 需要更新榜单时，重新执行导出命令并重新部署静态目录即可。
+
+---
+
 ## 挑战攻略
 
 ### 第一阶段 — Shiro RememberMe RCE（CVE-2016-4437）
